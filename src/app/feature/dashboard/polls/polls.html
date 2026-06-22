@@ -1,1 +1,177 @@
-<p>polls works!</p>
+<!-- <div [dir]="(direction) ? 'rtl' : 'ltr'" class="ac-container" [class.busy]="activeMask">
+  <div class="form-group-container">
+
+    <mat-card class="smart-mat-card" [hidden]="showEntryForm === true">
+      <div class="materialTableHeader">
+        <div class="flex">
+          <h5 class="headerTitleH5">
+            {{ 'Mission Type' | i18n: 'aCSetup4.missiontype.title' }}
+          </h5>
+
+
+          <mat-form-field class="searchTxt" appearance="null" floatLabel="never">
+            <input matInput placeholder="{{ 'Search' | i18n: 'aCSetup4.global.search'}}"
+              (keyup)="applyFilter($event.target.value)">
+
+            <mat-icon class="search-icon" matPrefix>search</mat-icon>
+
+          </mat-form-field>
+          <div class="flex">
+
+            <button mat-mini-fab color="primary" class="btnAdd" (click)="openDialog()">
+              <mat-icon>add</mat-icon>
+            </button>
+
+
+            <button mat-mini-fab color="primary" class="btnReload" (click)="loadAllRecords()">
+              <mat-icon>refresh </mat-icon>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="gridView">
+        <mat-table [dataSource]="dataSource" matSort>
+
+
+          <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">
+              {{'id' | i18n:'aCSetup4.missiontype.id'}}
+            </mat-header-cell>
+            <mat-cell (click)="openDialogEdit(row)" class="mat-row-clickable" *matCellDef="let row">
+              {{row.id}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="name_ar">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">
+              {{'name_ar' | i18n:'aCSetup4.missiontype.name_ar'}}
+            </mat-header-cell>
+            <mat-cell (click)="openDialogEdit(row)" class="mat-row-clickable" *matCellDef="let row">
+              {{row.name_ar}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="name_en">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">
+              {{'name_en' | i18n:'aCSetup4.missiontype.name_en'}}
+            </mat-header-cell>
+            <mat-cell (click)="openDialogEdit(row)" class="mat-row-clickable" *matCellDef="let row">
+              {{row.name_en}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="color">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">
+              {{'color' | i18n:'aCSetup4.missiontype.color'}}
+            </mat-header-cell>
+            <mat-cell (click)="openDialogEdit(row)" class="mat-row-clickable" *matCellDef="let row">
+              {{row.color}}
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div [style.background-color]="row.color"
+                  style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #ccc;"></div>
+              </div>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="ordered">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">
+              {{'ordered' | i18n:'aCSetup4.missiontype.ordered'}}
+            </mat-header-cell>
+            <mat-cell (click)="openDialogEdit(row)" class="mat-row-clickable" *matCellDef="let row">
+              {{row.ordered}} </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actionsBtn">
+            <mat-header-cell *matHeaderCellDef class="col-header">
+              {{ 'Actions' | i18n:'aCSetup4.global.actions'}}
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+
+              <button mat-icon-button matTooltip="{{ 'Delete Row' | i18n:'aCSetup4.global.deleteRow' }}"
+                (click)="deleteTransaction(row)" class="btn btn-sm btn-danger">
+                <mat-icon style="color: darkred!important;">delete_forever</mat-icon>
+              </button>
+
+            </mat-cell>
+          </ng-container>
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"> </mat-row>
+        </mat-table>
+        <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+
+      </div>
+
+    </mat-card>
+
+    <mat-card class="smart-mat-card" [hidden]="showEntryForm === false">
+      <div class="entryFormHeader">
+        <div class="entryFormTitle">
+          <h4 *ngIf="!masterRecord.id">{{ 'New ' | i18n: 'aCSetup4.global.new' }}</h4>
+          <h4 *ngIf="masterRecord.id">{{ 'Update' | i18n: 'aCSetup4.global.update' }}</h4>
+          <h4>{{ 'missiontype' | i18n: 'aCSetup4.missiontype.title' }}</h4>
+        </div>
+        <div class="entryFormClose">
+          <button mat-mini-fab color="secondary" (click)="closeDialog()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-row" *ngIf="masterRecord.id" style="margin-bottom: 21px;">
+          <div class="col-md-6">
+            <mat-form-field class="full-width">
+              <mat-label>{{ 'id' | i18n:'aCSetup4.missiontype.id' }}</mat-label>
+              <input matInput [(ngModel)]="masterRecord.id" name="id" type="number" readonly
+                matTooltip="{{ 'auto_generated' | i18n:'aCSetup4.autoIncrement.auto_generated' }}">
+              <mat-hint>
+                {{ 'auto_generated_hint' | i18n:'aCSetup4.autoIncrement.auto_generated_hint' }}
+              </mat-hint>
+            </mat-form-field>
+          </div>
+
+        </div>
+        <div class="form-row">
+          <div class="col-md">
+            <mat-form-field class="full-width">
+              <mat-label> {{'name_ar' | i18n:'aCSetup4.missiontype.name_ar'}}
+              </mat-label>
+              <input matInput [(ngModel)]="masterRecord.name_ar" name="name_ar" />
+            </mat-form-field>
+          </div>
+
+          <div class="col-md">
+            <mat-form-field class="full-width">
+              <mat-label> {{'name_en' | i18n:'aCSetup4.missiontype.name_en'}}
+              </mat-label>
+              <input matInput [(ngModel)]="masterRecord.name_en" name="name_en" />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="col-md">
+            <mat-form-field class="full-width">
+              <mat-label> {{'ordered' | i18n:'aCSetup4.missiontype.ordered'}}
+              </mat-label>
+              <input matInput [(ngModel)]="masterRecord.ordered" name="ordered" type="number" />
+            </mat-form-field>
+          </div>
+
+          <div class="col-md">
+            <mat-form-field class="full-width">
+              <mat-label>{{'color' | i18n:'aCSetup4.missiontype.color'}}</mat-label>
+              <input matInput [(ngModel)]="masterRecord.color" name="color" type="color"
+                style="height: 40px; cursor: pointer;" />
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <button mat-button type="button" class="btn-save" (click)="doSave()">
+          <mat-icon>save</mat-icon> {{'Save' | i18n:'aCSetup4.global.save'}}
+        </button>
+        <button mat-button (click)="doClear()" class="btn-clear">
+          <mat-icon>clear</mat-icon> {{'Reset' | i18n:'aCSetup4.global.reset'}}
+        </button>
+      </div>
+    </mat-card>
+
+  </div>
+</div> -->
