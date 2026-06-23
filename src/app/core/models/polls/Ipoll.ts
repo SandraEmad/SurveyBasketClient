@@ -1,4 +1,4 @@
-export interface Poll {
+export interface IPoll {
   id?: number;
   title: string;
   summary: string;

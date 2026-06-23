@@ -1,109 +1,99 @@
-<!-- <div [dir]="(direction) ? 'rtl' : 'ltr'" class="ac-container" [class.busy]="activeMask">
+<div [dir]="direction() ? 'rtl' : 'ltr'" class="ac-container">
   <div class="form-group-container">
 
-    <mat-card class="smart-mat-card" [hidden]="showEntryForm === true">
+    <!-- LIST -->
+    <mat-card class="smart-mat-card" [hidden]="showEntryForm()">
       <div class="materialTableHeader">
         <div class="flex">
-          <h5 class="headerTitleH5">
-            {{ 'Mission Type' | i18n: 'aCSetup4.missiontype.title' }}
-          </h5>
+          <h5 class="headerTitleH5">{{ 'polls.title' | translate }}</h5>
 
-
-          <mat-form-field class="searchTxt" appearance="null" floatLabel="never">
-            <input matInput placeholder="{{ 'Search' | i18n: 'aCSetup4.global.search'}}"
-              (keyup)="applyFilter($event.target.value)">
-
-            <mat-icon class="search-icon" matPrefix>search</mat-icon>
-
+          <mat-form-field class="searchTxt" appearance="outline">
+            <input matInput placeholder="{{ 'global.search' | translate }}"
+              (keyup)="applyFilter($any($event.target).value)">
+            <mat-icon matPrefix>search</mat-icon>
           </mat-form-field>
-          <div class="flex">
 
+          <div class="flex">
             <button mat-mini-fab color="primary" class="btnAdd" (click)="openDialog()">
               <mat-icon>add</mat-icon>
             </button>
-
-
-            <button mat-mini-fab color="primary" class="btnReload" (click)="loadAllRecords()">
-              <mat-icon>refresh </mat-icon>
+            <button mat-mini-fab color="primary" class="btnReload" (click)="loadAllPolls()">
+              <mat-icon>refresh</mat-icon>
             </button>
           </div>
         </div>
-
       </div>
 
       <div class="gridView">
         <mat-table [dataSource]="dataSource" matSort>
 
-
           <ng-container matColumnDef="id">
-            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">
-              {{'id' | i18n:'aCSetup4.missiontype.id'}}
-            </mat-header-cell>
-            <mat-cell (click)="openDialogEdit(row)" class="mat-row-clickable" *matCellDef="let row">
-              {{row.id}} </mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="name_ar">
-            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">
-              {{'name_ar' | i18n:'aCSetup4.missiontype.name_ar'}}
-            </mat-header-cell>
-            <mat-cell (click)="openDialogEdit(row)" class="mat-row-clickable" *matCellDef="let row">
-              {{row.name_ar}} </mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="name_en">
-            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">
-              {{'name_en' | i18n:'aCSetup4.missiontype.name_en'}}
-            </mat-header-cell>
-            <mat-cell (click)="openDialogEdit(row)" class="mat-row-clickable" *matCellDef="let row">
-              {{row.name_en}} </mat-cell>
-          </ng-container>
-          <ng-container matColumnDef="color">
-            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">
-              {{'color' | i18n:'aCSetup4.missiontype.color'}}
-            </mat-header-cell>
-            <mat-cell (click)="openDialogEdit(row)" class="mat-row-clickable" *matCellDef="let row">
-              {{row.color}}
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <div [style.background-color]="row.color"
-                  style="width: 20px; height: 20px; border-radius: 50%; border: 1px solid #ccc;"></div>
-              </div>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>#</mat-header-cell>
+            <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
+              {{ row.id }}
             </mat-cell>
           </ng-container>
-          <ng-container matColumnDef="ordered">
-            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">
-              {{'ordered' | i18n:'aCSetup4.missiontype.ordered'}}
-            </mat-header-cell>
-            <mat-cell (click)="openDialogEdit(row)" class="mat-row-clickable" *matCellDef="let row">
-              {{row.ordered}} </mat-cell>
+
+          <ng-container matColumnDef="title">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'polls.title' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
+              {{ row.title }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="summary">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'polls.summary' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
+              {{ row.summary }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="isPublished">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'polls.isPublished' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
+              <mat-icon [style.color]="row.isPublished ? 'green' : 'red'">
+                {{ row.isPublished ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="startsAt">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'polls.startsAt' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
+              {{ row.startsAt }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="endsAt">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'polls.endsAt' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
+              {{ row.endsAt }}
+            </mat-cell>
           </ng-container>
 
           <ng-container matColumnDef="actionsBtn">
-            <mat-header-cell *matHeaderCellDef class="col-header">
-              {{ 'Actions' | i18n:'aCSetup4.global.actions'}}
-            </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef>{{ 'global.actions' | translate }}</mat-header-cell>
             <mat-cell *matCellDef="let row">
-
-              <button mat-icon-button matTooltip="{{ 'Delete Row' | i18n:'aCSetup4.global.deleteRow' }}"
-                (click)="deleteTransaction(row)" class="btn btn-sm btn-danger">
-                <mat-icon style="color: darkred!important;">delete_forever</mat-icon>
+              <button mat-icon-button [matTooltip]="'global.delete' | translate" (click)="deleteTransaction(row)">
+                <mat-icon style="color: darkred">delete_forever</mat-icon>
               </button>
-
             </mat-cell>
           </ng-container>
+
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns;"> </mat-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
         </mat-table>
+
         <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
-
       </div>
-
     </mat-card>
 
-    <mat-card class="smart-mat-card" [hidden]="showEntryForm === false">
+    <!-- FORM -->
+    <mat-card class="smart-mat-card" [hidden]="!showEntryForm()">
       <div class="entryFormHeader">
         <div class="entryFormTitle">
-          <h4 *ngIf="!masterRecord.id">{{ 'New ' | i18n: 'aCSetup4.global.new' }}</h4>
-          <h4 *ngIf="masterRecord.id">{{ 'Update' | i18n: 'aCSetup4.global.update' }}</h4>
-          <h4>{{ 'missiontype' | i18n: 'aCSetup4.missiontype.title' }}</h4>
+          <h4>{{ (masterRecord.id ? 'global.update' : 'global.new') | translate }}</h4>
+          <h4>{{ 'polls.title' | translate }}</h4>
         </div>
         <div class="entryFormClose">
           <button mat-mini-fab color="secondary" (click)="closeDialog()">
@@ -113,33 +103,29 @@
       </div>
 
       <div class="form-group">
-        <div class="form-row" *ngIf="masterRecord.id" style="margin-bottom: 21px;">
+
+        @if (masterRecord.id) {
+        <div class="form-row" style="margin-bottom: 21px;">
           <div class="col-md-6">
             <mat-form-field class="full-width">
-              <mat-label>{{ 'id' | i18n:'aCSetup4.missiontype.id' }}</mat-label>
-              <input matInput [(ngModel)]="masterRecord.id" name="id" type="number" readonly
-                matTooltip="{{ 'auto_generated' | i18n:'aCSetup4.autoIncrement.auto_generated' }}">
-              <mat-hint>
-                {{ 'auto_generated_hint' | i18n:'aCSetup4.autoIncrement.auto_generated_hint' }}
-              </mat-hint>
+              <mat-label>ID</mat-label>
+              <input matInput [(ngModel)]="masterRecord.id" type="number" readonly>
             </mat-form-field>
           </div>
-
         </div>
+        }
+
         <div class="form-row">
           <div class="col-md">
             <mat-form-field class="full-width">
-              <mat-label> {{'name_ar' | i18n:'aCSetup4.missiontype.name_ar'}}
-              </mat-label>
-              <input matInput [(ngModel)]="masterRecord.name_ar" name="name_ar" />
+              <mat-label>{{ 'polls.titleField' | translate }}</mat-label>
+              <input matInput [(ngModel)]="masterRecord.title" name="title">
             </mat-form-field>
           </div>
-
           <div class="col-md">
             <mat-form-field class="full-width">
-              <mat-label> {{'name_en' | i18n:'aCSetup4.missiontype.name_en'}}
-              </mat-label>
-              <input matInput [(ngModel)]="masterRecord.name_en" name="name_en" />
+              <mat-label>{{ 'polls.summary' | translate }}</mat-label>
+              <input matInput [(ngModel)]="masterRecord.summary" name="summary">
             </mat-form-field>
           </div>
         </div>
@@ -147,31 +133,29 @@
         <div class="form-row">
           <div class="col-md">
             <mat-form-field class="full-width">
-              <mat-label> {{'ordered' | i18n:'aCSetup4.missiontype.ordered'}}
-              </mat-label>
-              <input matInput [(ngModel)]="masterRecord.ordered" name="ordered" type="number" />
+              <mat-label>{{ 'polls.startsAt' | translate }}</mat-label>
+              <input matInput [(ngModel)]="masterRecord.startsAt" name="startsAt" type="date">
             </mat-form-field>
           </div>
-
           <div class="col-md">
             <mat-form-field class="full-width">
-              <mat-label>{{'color' | i18n:'aCSetup4.missiontype.color'}}</mat-label>
-              <input matInput [(ngModel)]="masterRecord.color" name="color" type="color"
-                style="height: 40px; cursor: pointer;" />
+              <mat-label>{{ 'polls.endsAt' | translate }}</mat-label>
+              <input matInput [(ngModel)]="masterRecord.endsAt" name="endsAt" type="date">
             </mat-form-field>
           </div>
         </div>
+
       </div>
 
       <div class="footer">
-        <button mat-button type="button" class="btn-save" (click)="doSave()">
-          <mat-icon>save</mat-icon> {{'Save' | i18n:'aCSetup4.global.save'}}
+        <button mat-button class="btn-save" (click)="doSave()">
+          <mat-icon>save</mat-icon> {{ 'global.save' | translate }}
         </button>
-        <button mat-button (click)="doClear()" class="btn-clear">
-          <mat-icon>clear</mat-icon> {{'Reset' | i18n:'aCSetup4.global.reset'}}
+        <button mat-button class="btn-clear" (click)="doClear()">
+          <mat-icon>clear</mat-icon> {{ 'global.cancel' | translate }}
         </button>
       </div>
     </mat-card>
 
   </div>
-</div> -->
+</div>
