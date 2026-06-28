@@ -1,0 +1,36 @@
+{
+  "users": {
+    "title": "المستخدمون",
+    "subTitle": "إدارة وتنظيم المستخدمين",
+    "addUser": "إضافة مستخدم",
+    "refresh": "تحديث",
+    "back": "رجوع",
+    "save": "حفظ",
+    "update": "تعديل",
+    "cancel": "إلغاء",
+    "editUser": "تعديل مستخدم",
+    "createUser": "إنشاء مستخدم جديد",
+    "updateUser": "تعديل بيانات المستخدم",
+    "search": "بحث عن مستخدم...",
+    "columns": {
+      "photo": "الصورة",
+      "firstName": "الاسم الأول",
+      "lastName": "الاسم الأخير",
+      "email": "البريد الإلكتروني",
+      "status": "الحالة",
+      "locked": "مقفول",
+      "actions": "الإجراءات"
+    },
+    "tooltips": {
+      "deactivate": "تعطيل",
+      "activate": "تفعيل",
+      "unlock": "فتح القفل"
+    },
+    "form": {
+      "firstName": "الاسم الأول",
+      "lastName": "الاسم الأخير",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور"
+    }
+  }
+}

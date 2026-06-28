@@ -1,6 +1,5 @@
 import { Component, inject, OnInit, OnDestroy, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -10,95 +9,195 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { Poll } from '../../../core/services/poll/poll';
 import { IPoll } from '../../../core/models/polls/Ipoll';
+import {
+  form, FormField,
+  required, minLength, maxLength, validate
+} from '@angular/forms/signals';
 
 @Component({
   selector: 'app-polls',
-  imports: [CommonModule, FormsModule,
+  standalone: true,
+  imports: [
+    CommonModule,
     MatTableModule, MatPaginatorModule, MatSortModule,
     MatCardModule, MatFormFieldModule, MatInputModule,
     MatButtonModule, MatIconModule, MatTooltipModule,
-    TranslatePipe],
+    TranslatePipe,
+    FormField,
+  ],
   templateUrl: './polls.html',
   styleUrl: './polls.scss',
 })
-export class Polls implements OnInit, OnDestroy{
+export class Polls implements OnInit, OnDestroy {
   private readonly pollService = inject(Poll);
   private readonly toastr = inject(ToastrService);
+  private translate = inject(TranslateService);
   private subscription = new Subscription();
-  masterRecord: IPoll = {} as IPoll;
+
   allPolls: IPoll[] = [];
-
-
-  isEditMode: string = "";
+  isEditMode: string = '';
+  editPollId: number | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
   dataSource = new MatTableDataSource<IPoll>([]);
-  displayedColumns = ['id', 'title', 'summary', 'isPublished', 'startsAt', 'endsAt', 'actionsBtn'];
+  displayedColumns = ['index', 'title', 'summary', 'isPublished', 'startsAt', 'endsAt', 'actionsBtn'];
 
   showEntryForm = signal(false);
   activeMask = signal(false);
-  direction = signal(false); // false = ltr, true = rtl
+  direction = signal(false);
 
-  applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase();
-    this.dataSource.filter = filterValue;
-  }
-  openDialog() {
-    this.isEditMode='';
-    this.showEntryForm.set(true);
-    this.masterRecord = {} as IPoll;
-  }
-  ngOnInit(){
+  // Signal Form
+  pollModel = signal({
+    title: '',
+    summary: '',
+    startsAt: '',
+    endsAt: '',
+  });
+
+  pollForm = form(this.pollModel, (schema) => {
+    required(schema.title, { message: 'Title is required.' });
+    minLength(schema.title, 3, { message: 'Title must be between 3 and 100 characters.' });
+    maxLength(schema.title, 100, { message: 'Title must be between 3 and 100 characters.' });
+
+    required(schema.summary, { message: 'Summary is required.' });
+    minLength(schema.summary, 10, { message: 'Summary must be between 10 and 1500 characters.' });
+    maxLength(schema.summary, 1500, { message: 'Summary must be between 10 and 1500 characters.' });
+
+    required(schema.startsAt, { message: 'StartsAt is required.' });
+    validate(schema.startsAt, ({ value }) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const start = new Date(value());
+      if (start < today) return [{ kind: 'minDate', message: 'Start date must be today or later.' }];
+      return undefined;
+    });
+
+    required(schema.endsAt, { message: 'EndsAt is required.' });
+    validate(schema.endsAt, ({ value, valueOf }) => {
+      const startsAt = valueOf(schema.startsAt);
+      if (value() && startsAt && new Date(value()) < new Date(startsAt)) {
+        return [{ kind: 'minDate', message: 'EndsAt must be greater than or equals start date.' }];
+      }
+      return undefined;
+    });
+  });
+
+  ngOnInit() {
     this.loadAllPolls();
+    this.direction.set(this.translate.currentLang() === 'ar');
+    const sub = this.translate.onLangChange.subscribe((event) => {
+      this.direction.set(event.lang === 'ar');
+    });
+    this.subscription.add(sub);
   }
+
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+  }
+
   refreshTable() {
     this.dataSource = new MatTableDataSource<IPoll>(this.allPolls);
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
+
+  applyFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  openDialog() {
+    this.isEditMode = '';
+    this.editPollId = null;
+    this.pollModel.set({ title: '', summary: '', startsAt: '', endsAt: '' });
+    this.showEntryForm.set(true);
+  }
+
+  openDialogEdit(row: IPoll) {
+    this.isEditMode = 'edit';
+    this.editPollId = row.id!;
+    this.showEntryForm.set(true);
+
+    this.pollService.getPollById(row.id!).subscribe({
+      next: (res) => {
+        this.pollModel.set({
+          title: res.data.title ?? '',
+          summary: res.data.summary ?? '',
+          startsAt: res.data.startsAt ?? '',
+          endsAt: res.data.endsAt ?? '',
+        });
+      }
+    });
+  }
+
+  closeDialog() {
+    this.showEntryForm.set(false);
+    this.pollModel.set({ title: '', summary: '', startsAt: '', endsAt: '' });
+  }
+
+  doClear() {
+    this.pollModel.set({ title: '', summary: '', startsAt: '', endsAt: '' });
+  }
+
+  doSave() {
+    if (this.pollForm().invalid()) return;
+
+    const payload = this.pollModel();
+
+    if (this.isEditMode === '') {
+      this.pollService.createPoll(payload).subscribe({
+        next: (res) => {
+          this.toastr.success('Poll created successfully.');
+          this.loadAllPolls();
+          this.closeDialog();
+        },
+        error: () => this.toastr.error('Failed to create poll.')
+      });
+    } else {
+      this.pollService.updatePoll(this.editPollId!, payload).subscribe({
+        next: () => {
+          this.toastr.success('Poll updated successfully.');
+          this.loadAllPolls();
+          this.closeDialog();
+        },
+        error: () => this.toastr.error('Failed to update poll.')
+      });
+    }
+  }
+
+  deleteTransaction(row: IPoll) {
+    this.pollService.deletePoll(row.id!).subscribe({
+      next: () => {
+        this.toastr.success('Poll deleted successfully.');
+        this.allPolls = this.allPolls.filter(p => p.id !== row.id);
+        this.refreshTable();
+      },
+      error: () => this.toastr.error('Failed to delete poll.')
+    });
+  }
+
   loadAllPolls() {
     this.subscription.add(
       this.pollService.getAllPoll().subscribe({
         next: (res) => {
-          if (res.status == 200){
+          if (res.status === 200) {
             this.allPolls = res.data;
             this.refreshTable();
           }
-
         },
-        error: () => {
-          this.toastr.error('Failed to load polls');
-          this.activeMask.set(false);
-        }
+        error: () => this.activeMask.set(false)
       })
     );
-
-  }
-
-  openDialogEdit(row: IPoll) {
-    this.showEntryForm.set(true);
-
-  }
-  deleteTransaction(row: IPoll) {
-
-  }
-  closeDialog() {
-    this.showEntryForm.set(false);
-  }
-  doSave() {
-
-  }
-  doClear() {
-
   }
 }

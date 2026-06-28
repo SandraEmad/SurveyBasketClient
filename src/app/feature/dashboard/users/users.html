@@ -1,1 +1,200 @@
-<p>users works!</p>
+<div [dir]="direction() ? 'rtl' : 'ltr'" class="ac-container">
+  <div class="form-group-container">
+
+    @if (!showEntryForm()) {
+    <mat-card class="smart-mat-card">
+      <div class="materialTableHeader">
+        <div class="headerLeft">
+          <div class="usersIcon">
+            <mat-icon>groups</mat-icon>
+          </div>
+          <div>
+            <h5 class="headerTitleH5">{{ 'users.title' | translate }}</h5>
+            <span class="headerSubTitle">{{ 'users.subTitle' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="headerCenter">
+          <mat-form-field class="searchTxt">
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput [placeholder]="'users.search' | translate"
+              (keyup)="applyFilter($any($event.target).value)" />
+          </mat-form-field>
+        </div>
+
+        <div class="headerRight">
+          <button mat-flat-button class="actionBtn" (click)="openDialog()">
+            <mat-icon>add</mat-icon>
+            {{ 'users.addUser' | translate }}
+          </button>
+          <button mat-flat-button class="actionBtn" (click)="loadUsers()">
+            <mat-icon>refresh</mat-icon>
+            {{ 'users.refresh' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="isLoading" style="text-align: center; padding: 32px">
+        <mat-icon>hourglass_empty</mat-icon> Loading...
+      </div>
+
+      <div class="gridView" [hidden]="isLoading">
+        <mat-table matSort [dataSource]="dataSource">
+
+          <ng-container matColumnDef="photo">
+            <mat-header-cell *matHeaderCellDef class="col-header">{{ 'users.columns.photo' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <img [src]="row.photo || 'assets/images/default-avatar.png'"
+                style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover" />
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="firstName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">{{ 'users.columns.firstName' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="mat-row-clickable" (click)="openDialogEdit(row)">
+              {{ row.firstName }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="lastName">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">{{ 'users.columns.lastName' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row" class="mat-row-clickable" (click)="openDialogEdit(row)">
+              {{ row.lastName }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">{{ 'users.columns.email' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.email }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="isActive">
+            <mat-header-cell *matHeaderCellDef class="col-header">{{ 'users.columns.status' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <mat-icon [style.color]="row.isActive ? 'green' : 'gray'">
+                {{ row.isActive ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="isLocked">
+            <mat-header-cell *matHeaderCellDef class="col-header">{{ 'users.columns.locked' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <mat-icon [style.color]="row.isLocked ? 'darkred' : 'green'">
+                {{ row.isLocked ? 'lock' : 'lock_open' }}
+              </mat-icon>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actionsBtn">
+            <mat-header-cell *matHeaderCellDef class="col-header">{{ 'users.columns.actions' | translate }}</mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <button mat-icon-button
+                [matTooltip]="(row.isActive ? 'users.tooltips.deactivate' : 'users.tooltips.activate') | translate"
+                (click)="toggleStatus(row)">
+                <mat-icon [style.color]="row.isActive ? 'orange' : 'green'">
+                  {{ row.isActive ? 'block' : 'check_circle' }}
+                </mat-icon>
+              </button>
+
+              <button mat-icon-button
+                [matTooltip]="'users.tooltips.unlock' | translate"
+                [disabled]="!row.isLocked"
+                (click)="unlock(row)">
+                <mat-icon [style.color]="row.isLocked ? 'darkred' : 'gray'">lock_open</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+        </mat-table>
+        <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+      </div>
+    </mat-card>
+
+    } @else {
+
+    <mat-card class="smart-mat-card">
+      <div class="materialTableHeader">
+        <div class="headerLeft">
+          <div class="usersIcon">
+            <mat-icon>{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
+          </div>
+          <div>
+            <h5 class="headerTitleH5">{{ (isEditMode ? 'users.editUser' : 'users.addUser') | translate }}</h5>
+            <span class="headerSubTitle">{{ (isEditMode ? 'users.updateUser' : 'users.createUser') | translate }}</span>
+          </div>
+        </div>
+        <div class="headerRight">
+          <button mat-flat-button class="actionBtn" (click)="closeDialog()">
+            <mat-icon>arrow_back</mat-icon>
+            {{ 'users.back' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <div class="form-body">
+        <div class="form-row">
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'users.form.firstName' | translate }}</mat-label>
+            <input matInput [formField]="userForm.firstName" />
+            @if (userForm.firstName().touched() && userForm.firstName().invalid()) {
+              @for (error of userForm.firstName().errors(); track error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            }
+          </mat-form-field>
+
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'users.form.lastName' | translate }}</mat-label>
+            <input matInput [formField]="userForm.lastName" />
+            @if (userForm.lastName().touched() && userForm.lastName().invalid()) {
+              @for (error of userForm.lastName().errors(); track error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'users.form.email' | translate }}</mat-label>
+            <input matInput type="email" [formField]="userForm.email" />
+            @if (userForm.email().touched() && userForm.email().invalid()) {
+              @for (error of userForm.email().errors(); track error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            }
+          </mat-form-field>
+
+          @if (isEditMode === '') {
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'users.form.password' | translate }}</mat-label>
+            <input matInput type="password" [formField]="userForm.password" />
+            @if (userForm.password().touched() && userForm.password().invalid()) {
+              @for (error of userForm.password().errors(); track error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            }
+          </mat-form-field>
+          }
+        </div>
+
+        <div class="form-actions">
+          <button mat-flat-button class="actionBtn"
+            [disabled]="userForm().invalid()"
+            (click)="doSave()">
+            <mat-icon>save</mat-icon>
+            {{ (isEditMode ? 'users.update' : 'users.save') | translate }}
+          </button>
+          <button mat-stroked-button (click)="closeDialog()">
+            {{ 'users.cancel' | translate }}
+          </button>
+        </div>
+      </div>
+    </mat-card>
+    }
+
+  </div>
+</div>

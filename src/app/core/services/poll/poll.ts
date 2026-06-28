@@ -13,24 +13,23 @@ export class Poll {
     return this.httpClient.get(`${this.baseUrl}/GetList`);
   }
 
-  createPoll(poll: IPoll):Observable<any>{
-    return this.httpClient.post(`${this.baseUrl}/Create`,poll);
+  getPollById(id: number): Observable<any> {
+    return this.httpClient.get(`${this.baseUrl}/GetById`, { params: { id } });
   }
 
-  getPollById(id:number):Observable<any>{
-    return this.httpClient.get(`${this.baseUrl}GetById?id=${id}`);
+  createPoll(poll: IPoll): Observable<any> {
+    return this.httpClient.post(`${this.baseUrl}/Create`, poll);
   }
 
-  updatePoll(id: number, poll: IPoll):Observable<any>{
-    return this.httpClient.put(`${this.baseUrl}/Update?id=${id}`, poll);
-  }
-  deletePoll(id:number):Observable<any>{
-    return this.httpClient.delete(`${this.baseUrl}/Delete?id=${id}`);
-
-  }
-  TogglePublishStatus(id:number):Observable<any>{
-    return this.httpClient.put(`${this.baseUrl}?id=${id}/TogglePublishStatus`,{});
+  updatePoll(id: number, poll: IPoll): Observable<any> {
+    return this.httpClient.put(`${this.baseUrl}/Update`, poll, { params: { id } });
   }
 
+  deletePoll(id: number): Observable<any> {
+    return this.httpClient.delete(`${this.baseUrl}/Delete`, { params: { id } });
+  }
 
+  togglePublishStatus(id: number): Observable<any> {
+    return this.httpClient.put(`${this.baseUrl}/${id}/TogglePublishStatus`, {});
+  }
 }

@@ -1,15 +1,15 @@
 <div [dir]="direction() ? 'rtl' : 'ltr'" class="ac-container">
   <div class="form-group-container">
-
     <!-- LIST -->
-    <mat-card class="smart-mat-card" [hidden]="showEntryForm()">
+    @if (!showEntryForm()) {
+    <mat-card class="smart-mat-card" >
       <div class="materialTableHeader">
         <div class="flex">
           <h5 class="headerTitleH5">{{ 'polls.title' | translate }}</h5>
 
           <mat-form-field class="searchTxt" appearance="outline">
             <input matInput placeholder="{{ 'global.search' | translate }}"
-              (keyup)="applyFilter($any($event.target).value)">
+              (keyup)="applyFilter($any($event.target).value)" />
             <mat-icon matPrefix>search</mat-icon>
           </mat-form-field>
 
@@ -26,30 +26,35 @@
 
       <div class="gridView">
         <mat-table [dataSource]="dataSource" matSort>
-
-          <ng-container matColumnDef="id">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>#</mat-header-cell>
-            <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
-              {{ row.id }}
+          <ng-container matColumnDef="index">
+            <mat-header-cell *matHeaderCellDef class="col-header">#</mat-header-cell>
+            <mat-cell *matCellDef="let row; let i = index" (click)="openDialogEdit(row)" class="mat-row-clickable">
+              {{ i + 1 }}
             </mat-cell>
           </ng-container>
 
           <ng-container matColumnDef="title">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'polls.title' | translate }}</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{
+              'polls.title' | translate
+              }}</mat-header-cell>
             <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
               {{ row.title }}
             </mat-cell>
           </ng-container>
 
           <ng-container matColumnDef="summary">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'polls.summary' | translate }}</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{
+              'polls.summary' | translate
+              }}</mat-header-cell>
             <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
               {{ row.summary }}
             </mat-cell>
           </ng-container>
 
           <ng-container matColumnDef="isPublished">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'polls.isPublished' | translate }}</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{
+              'polls.isPublished' | translate
+              }}</mat-header-cell>
             <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
               <mat-icon [style.color]="row.isPublished ? 'green' : 'red'">
                 {{ row.isPublished ? 'check_circle' : 'cancel' }}
@@ -58,14 +63,18 @@
           </ng-container>
 
           <ng-container matColumnDef="startsAt">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'polls.startsAt' | translate }}</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{
+              'polls.startsAt' | translate
+              }}</mat-header-cell>
             <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
               {{ row.startsAt }}
             </mat-cell>
           </ng-container>
 
           <ng-container matColumnDef="endsAt">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'polls.endsAt' | translate }}</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef mat-sort-header>{{
+              'polls.endsAt' | translate
+              }}</mat-header-cell>
             <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
               {{ row.endsAt }}
             </mat-cell>
@@ -81,18 +90,17 @@
           </ng-container>
 
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
         </mat-table>
 
         <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
       </div>
     </mat-card>
-
-    <!-- FORM -->
-    <mat-card class="smart-mat-card" [hidden]="!showEntryForm()">
+    }@else{
+    <mat-card class="smart-mat-card" >
       <div class="entryFormHeader">
         <div class="entryFormTitle">
-          <h4>{{ (masterRecord.id ? 'global.update' : 'global.new') | translate }}</h4>
+          <h4>{{ (isEditMode ? 'global.update' : 'global.new') | translate }}</h4>
           <h4>{{ 'polls.title' | translate }}</h4>
         </div>
         <div class="entryFormClose">
@@ -103,29 +111,27 @@
       </div>
 
       <div class="form-group">
-
-        @if (masterRecord.id) {
-        <div class="form-row" style="margin-bottom: 21px;">
-          <div class="col-md-6">
-            <mat-form-field class="full-width">
-              <mat-label>ID</mat-label>
-              <input matInput [(ngModel)]="masterRecord.id" type="number" readonly>
-            </mat-form-field>
-          </div>
-        </div>
-        }
-
         <div class="form-row">
           <div class="col-md">
             <mat-form-field class="full-width">
               <mat-label>{{ 'polls.titleField' | translate }}</mat-label>
-              <input matInput [(ngModel)]="masterRecord.title" name="title">
+              <input matInput [formField]="pollForm.title" />
+              @if (pollForm.title().touched() && pollForm.title().invalid()) {
+              @for (error of pollForm.title().errors(); track error) {
+              <mat-error>{{ error.message }}</mat-error>
+              }
+              }
             </mat-form-field>
           </div>
           <div class="col-md">
             <mat-form-field class="full-width">
               <mat-label>{{ 'polls.summary' | translate }}</mat-label>
-              <input matInput [(ngModel)]="masterRecord.summary" name="summary">
+              <input matInput [formField]="pollForm.summary" />
+              @if (pollForm.summary().touched() && pollForm.summary().invalid()) {
+              @for (error of pollForm.summary().errors(); track error) {
+              <mat-error>{{ error.message }}</mat-error>
+              }
+              }
             </mat-form-field>
           </div>
         </div>
@@ -134,13 +140,23 @@
           <div class="col-md">
             <mat-form-field class="full-width">
               <mat-label>{{ 'polls.startsAt' | translate }}</mat-label>
-              <input matInput [(ngModel)]="masterRecord.startsAt" name="startsAt" type="date">
+              <input matInput type="date" [formField]="pollForm.startsAt" />
+              @if (pollForm.startsAt().touched() && pollForm.startsAt().invalid()) {
+              @for (error of pollForm.startsAt().errors(); track error) {
+              <mat-error>{{ error.message }}</mat-error>
+              }
+              }
             </mat-form-field>
           </div>
           <div class="col-md">
             <mat-form-field class="full-width">
               <mat-label>{{ 'polls.endsAt' | translate }}</mat-label>
-              <input matInput [(ngModel)]="masterRecord.endsAt" name="endsAt" type="date">
+              <input matInput type="date" [formField]="pollForm.endsAt" />
+              @if (pollForm.endsAt().touched() && pollForm.endsAt().invalid()) {
+              @for (error of pollForm.endsAt().errors(); track error) {
+              <mat-error>{{ error.message }}</mat-error>
+              }
+              }
             </mat-form-field>
           </div>
         </div>
@@ -148,7 +164,7 @@
       </div>
 
       <div class="footer">
-        <button mat-button class="btn-save" (click)="doSave()">
+        <button mat-button class="btn-save" [disabled]="pollForm().invalid()" (click)="doSave()">
           <mat-icon>save</mat-icon> {{ 'global.save' | translate }}
         </button>
         <button mat-button class="btn-clear" (click)="doClear()">
@@ -156,6 +172,8 @@
         </button>
       </div>
     </mat-card>
+    }
+
 
   </div>
 </div>

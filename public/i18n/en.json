@@ -1,0 +1,36 @@
+{
+  "users": {
+    "title": "Users",
+    "subTitle": "Manage and organize your users",
+    "addUser": "Add User",
+    "refresh": "Refresh",
+    "back": "Back",
+    "save": "Save",
+    "update": "Update",
+    "cancel": "Cancel",
+    "editUser": "Edit User",
+    "createUser": "Create a new user",
+    "updateUser": "Update user details",
+    "search": "Search users...",
+    "columns": {
+      "photo": "Photo",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "status": "Status",
+      "locked": "Locked",
+      "actions": "Actions"
+    },
+    "tooltips": {
+      "deactivate": "Deactivate",
+      "activate": "Activate",
+      "unlock": "Unlock User"
+    },
+    "form": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password"
+    }
+  }
+}

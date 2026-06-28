@@ -1,15 +1,18 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideToastr } from 'ngx-toastr';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { routes } from './app.routes';
+import { headerInterceptor } from './core/interceptors/header/header-interceptor';
+import { loadingInterceptor } from './core/interceptors/loading/loading-interceptor';
+import { errorInterceptor } from './core/interceptors/error/error-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([headerInterceptor, loadingInterceptor, errorInterceptor])),
     provideToastr({
       timeOut: 3000,
       positionClass: 'toast-top-right',
