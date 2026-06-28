@@ -3,10 +3,12 @@ import { Component, inject, OnInit, PLATFORM_ID, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { Users } from "./feature/dashboard/users/users";
+import { Polls } from "./feature/dashboard/polls/polls";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NgxSpinnerModule],
+  imports: [NgxSpinnerModule,Polls],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

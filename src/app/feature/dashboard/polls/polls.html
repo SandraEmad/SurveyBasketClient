@@ -1,31 +1,42 @@
 <div [dir]="direction() ? 'rtl' : 'ltr'" class="ac-container">
   <div class="form-group-container">
-    <!-- LIST -->
+
     @if (!showEntryForm()) {
-    <mat-card class="smart-mat-card" >
+    <mat-card class="smart-mat-card">
       <div class="materialTableHeader">
-        <div class="flex">
-          <h5 class="headerTitleH5">{{ 'polls.title' | translate }}</h5>
-
-          <mat-form-field class="searchTxt" appearance="outline">
-            <input matInput placeholder="{{ 'global.search' | translate }}"
-              (keyup)="applyFilter($any($event.target).value)" />
-            <mat-icon matPrefix>search</mat-icon>
-          </mat-form-field>
-
-          <div class="flex">
-            <button mat-mini-fab color="primary" class="btnAdd" (click)="openDialog()">
-              <mat-icon>add</mat-icon>
-            </button>
-            <button mat-mini-fab color="primary" class="btnReload" (click)="loadAllPolls()">
-              <mat-icon>refresh</mat-icon>
-            </button>
+        <div class="headerLeft">
+          <div class="usersIcon">
+            <mat-icon>poll</mat-icon>
           </div>
+          <div>
+            <h5 class="headerTitleH5">{{ 'polls.title' | translate }}</h5>
+            <span class="headerSubTitle">{{ 'polls.subTitle' | translate }}</span>
+          </div>
+        </div>
+
+        <div class="headerCenter">
+          <mat-form-field class="searchTxt">
+            <mat-icon matPrefix>search</mat-icon>
+            <input matInput [placeholder]="'global.search' | translate"
+              (keyup)="applyFilter($any($event.target).value)" />
+          </mat-form-field>
+        </div>
+
+        <div class="headerRight">
+          <button mat-flat-button class="actionBtn" (click)="openDialog()">
+            <mat-icon>add</mat-icon>
+            {{ 'polls.addPoll' | translate }}
+          </button>
+          <button mat-flat-button class="actionBtn" (click)="loadAllPolls()">
+            <mat-icon>refresh</mat-icon>
+            {{ 'users.refresh' | translate }}
+          </button>
         </div>
       </div>
 
       <div class="gridView">
         <mat-table [dataSource]="dataSource" matSort>
+
           <ng-container matColumnDef="index">
             <mat-header-cell *matHeaderCellDef class="col-header">#</mat-header-cell>
             <mat-cell *matCellDef="let row; let i = index" (click)="openDialogEdit(row)" class="mat-row-clickable">
@@ -34,8 +45,7 @@
           </ng-container>
 
           <ng-container matColumnDef="title">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{
-              'polls.title' | translate
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">{{ 'polls.title' | translate
               }}</mat-header-cell>
             <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
               {{ row.title }}
@@ -43,8 +53,7 @@
           </ng-container>
 
           <ng-container matColumnDef="summary">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{
-              'polls.summary' | translate
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">{{ 'polls.summary' | translate
               }}</mat-header-cell>
             <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
               {{ row.summary }}
@@ -52,19 +61,17 @@
           </ng-container>
 
           <ng-container matColumnDef="isPublished">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{
-              'polls.isPublished' | translate
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">{{ 'polls.isPublished' | translate
               }}</mat-header-cell>
             <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
-              <mat-icon [style.color]="row.isPublished ? 'green' : 'red'">
+              <mat-icon [style.color]="row.isPublished ? 'green' : 'gray'">
                 {{ row.isPublished ? 'check_circle' : 'cancel' }}
               </mat-icon>
             </mat-cell>
           </ng-container>
 
           <ng-container matColumnDef="startsAt">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{
-              'polls.startsAt' | translate
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">{{ 'polls.startsAt' | translate
               }}</mat-header-cell>
             <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
               {{ row.startsAt }}
@@ -72,8 +79,7 @@
           </ng-container>
 
           <ng-container matColumnDef="endsAt">
-            <mat-header-cell *matHeaderCellDef mat-sort-header>{{
-              'polls.endsAt' | translate
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">{{ 'polls.endsAt' | translate
               }}</mat-header-cell>
             <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
               {{ row.endsAt }}
@@ -81,7 +87,7 @@
           </ng-container>
 
           <ng-container matColumnDef="actionsBtn">
-            <mat-header-cell *matHeaderCellDef>{{ 'global.actions' | translate }}</mat-header-cell>
+            <mat-header-cell *matHeaderCellDef class="col-header">{{ 'global.actions' | translate }}</mat-header-cell>
             <mat-cell *matCellDef="let row">
               <button mat-icon-button [matTooltip]="'global.delete' | translate" (click)="deleteTransaction(row)">
                 <mat-icon style="color: darkred">delete_forever</mat-icon>
@@ -96,84 +102,93 @@
         <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
       </div>
     </mat-card>
-    }@else{
-    <mat-card class="smart-mat-card" >
-      <div class="entryFormHeader">
-        <div class="entryFormTitle">
-          <h4>{{ (isEditMode ? 'global.update' : 'global.new') | translate }}</h4>
-          <h4>{{ 'polls.title' | translate }}</h4>
+
+    } @else {
+
+    <mat-card class="smart-mat-card">
+      <div class="materialTableHeader">
+        <div class="headerLeft">
+          <div class="usersIcon">
+            <mat-icon>{{ isEditMode ? 'edit' : 'add_circle' }}</mat-icon>
+          </div>
+          <div>
+            <h5 class="headerTitleH5">{{ (isEditMode ? 'global.update' : 'global.new') | translate }}</h5>
+            <span class="headerSubTitle">{{ 'polls.title' | translate }}</span>
+          </div>
         </div>
-        <div class="entryFormClose">
-          <button mat-mini-fab color="secondary" (click)="closeDialog()">
-            <mat-icon>close</mat-icon>
+        <div class="headerRight">
+          <button mat-flat-button class="actionBtn" (click)="closeDialog()">
+            <mat-icon>arrow_back</mat-icon>
+            {{ 'users.back' | translate }}
           </button>
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-body">
         <div class="form-row">
-          <div class="col-md">
-            <mat-form-field class="full-width">
-              <mat-label>{{ 'polls.titleField' | translate }}</mat-label>
-              <input matInput [formField]="pollForm.title" />
-              @if (pollForm.title().touched() && pollForm.title().invalid()) {
-              @for (error of pollForm.title().errors(); track error) {
-              <mat-error>{{ error.message }}</mat-error>
-              }
-              }
-            </mat-form-field>
-          </div>
-          <div class="col-md">
-            <mat-form-field class="full-width">
-              <mat-label>{{ 'polls.summary' | translate }}</mat-label>
-              <input matInput [formField]="pollForm.summary" />
-              @if (pollForm.summary().touched() && pollForm.summary().invalid()) {
-              @for (error of pollForm.summary().errors(); track error) {
-              <mat-error>{{ error.message }}</mat-error>
-              }
-              }
-            </mat-form-field>
-          </div>
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'polls.titleField' | translate }}</mat-label>
+            <input matInput [formField]="pollForm.title" />
+            @if (pollForm.title().touched() && pollForm.title().invalid()) {
+            @for (error of pollForm.title().errors(); track error) {
+            <mat-error>{{ error.message }}</mat-error>
+            }
+            }
+          </mat-form-field>
+
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'polls.summary' | translate }}</mat-label>
+            <input matInput [formField]="pollForm.summary" />
+            @if (pollForm.summary().touched() && pollForm.summary().invalid()) {
+            @for (error of pollForm.summary().errors(); track error) {
+            <mat-error>{{ error.message }}</mat-error>
+            }
+            }
+          </mat-form-field>
         </div>
 
         <div class="form-row">
-          <div class="col-md">
-            <mat-form-field class="full-width">
-              <mat-label>{{ 'polls.startsAt' | translate }}</mat-label>
-              <input matInput type="date" [formField]="pollForm.startsAt" />
-              @if (pollForm.startsAt().touched() && pollForm.startsAt().invalid()) {
-              @for (error of pollForm.startsAt().errors(); track error) {
-              <mat-error>{{ error.message }}</mat-error>
-              }
-              }
-            </mat-form-field>
-          </div>
-          <div class="col-md">
-            <mat-form-field class="full-width">
-              <mat-label>{{ 'polls.endsAt' | translate }}</mat-label>
-              <input matInput type="date" [formField]="pollForm.endsAt" />
-              @if (pollForm.endsAt().touched() && pollForm.endsAt().invalid()) {
-              @for (error of pollForm.endsAt().errors(); track error) {
-              <mat-error>{{ error.message }}</mat-error>
-              }
-              }
-            </mat-form-field>
-          </div>
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'polls.startsAt' | translate }}</mat-label>
+            <input matInput [matDatepicker]="startPicker" [formField]="pollForm.startsAt" />
+            <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+            <mat-datepicker #startPicker></mat-datepicker>
+            @if (pollForm.startsAt().touched() && pollForm.startsAt().invalid()) {
+            @for (error of pollForm.startsAt().errors(); track error) {
+            <mat-error>{{ error.message }}</mat-error>
+            }
+            }
+          </mat-form-field>
+          <mat-form-field class="form-field">
+            <mat-label>{{ 'polls.endsAt' | translate }}</mat-label>
+            <input matInput [matDatepicker]="endPicker" [formField]="pollForm.endsAt"
+              [min]="pollForm.startsAt().value()" />
+            <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+            @if (pollForm.endsAt().touched() && pollForm.endsAt().invalid()) {
+            @for (error of pollForm.endsAt().errors(); track error) {
+            <mat-error>{{ error.message }}</mat-error>
+            }
+            }
+          </mat-form-field>
         </div>
 
-      </div>
+        <div class="form-actions">
+          <button mat-flat-button class="actionBtn" [disabled]="pollForm().invalid()" (click)="doSave()">
+            <mat-icon>save</mat-icon>
+            {{ (isEditMode ? 'global.update' : 'global.save') | translate }}
+          </button>
+          <button mat-stroked-button (click)="doClear()">
+            {{ 'global.cancel' | translate }}
+          </button>
+        </div>
 
-      <div class="footer">
-        <button mat-button class="btn-save" [disabled]="pollForm().invalid()" (click)="doSave()">
-          <mat-icon>save</mat-icon> {{ 'global.save' | translate }}
-        </button>
-        <button mat-button class="btn-clear" (click)="doClear()">
-          <mat-icon>clear</mat-icon> {{ 'global.cancel' | translate }}
-        </button>
       </div>
     </mat-card>
+    @if (showQuestionsSection) {
+    <app-questions [pollId]="currentPollId!" />
     }
-
+    }
 
   </div>
 </div>

@@ -56,7 +56,7 @@
 
   background:
     linear-gradient(120deg,
-      #4b8ff9 0%,
+      #7599d3 0%,
       #67b0ff 55%,
       #74c0ff 100%);
 }
@@ -203,7 +203,7 @@
 
   background: white !important;
 
-  color: #3d83ff !important;
+  color: #67b0ff !important;
 
 
   box-shadow:
@@ -233,7 +233,7 @@
 
   font-size: 13px;
 
-  color: #3b69d6 !important;
+  color: #67b0ff !important;
 
   font-weight: 700;
 
@@ -362,6 +362,7 @@ mat-paginator {
       0 8px 18px rgba(0, 0, 0, .05);
     transition: .3s;
   }
+
   // ::ng-deep .mdc-notched-outline {
   //   border-color: #d9e6ff !important;
   // }
@@ -397,7 +398,8 @@ mat-paginator {
 
   color: #2f4058;
 }
-.form-actions{
+
+.form-actions {
   display: flex;
   justify-content: center;
 }
@@ -407,7 +409,7 @@ mat-paginator {
   height: 50px;
   border-radius: 16px;
   border: 1px solid #d5e4ff;
-  color: #4d74d6;
+  color: #67b0ff;
   background: white;
   transition: .3s;
 }

@@ -14,10 +14,14 @@ import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
 import { Poll } from '../../../core/services/poll/poll';
 import { IPoll } from '../../../core/models/polls/Ipoll';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 import {
   form, FormField,
   required, minLength, maxLength, validate
 } from '@angular/forms/signals';
+import { Questions } from "../questions/questions";
 
 @Component({
   selector: 'app-polls',
@@ -29,7 +33,10 @@ import {
     MatButtonModule, MatIconModule, MatTooltipModule,
     TranslatePipe,
     FormField,
-  ],
+    MatDatepickerModule,
+    MatNativeDateModule,
+    Questions
+],
   templateUrl: './polls.html',
   styleUrl: './polls.scss',
 })
@@ -39,7 +46,33 @@ export class Polls implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private subscription = new Subscription();
 
-  allPolls: IPoll[] = [];
+  // allPolls: IPoll[] = [];
+  allPolls: any[] = [
+    {
+      id: 1,
+      title: 'Customer Satisfaction Survey',
+      summary: 'Survey about our service quality',
+      isPublished: true,
+      startsAt: '2026-01-01',
+      endsAt: '2026-12-31'
+    },
+    {
+      id: 2,
+      title: 'Employee Feedback Survey',
+      summary: 'Annual employee engagement survey',
+      isPublished: false,
+      startsAt: '2026-03-01',
+      endsAt: '2026-06-30'
+    },
+    {
+      id: 3,
+      title: 'Product Experience Survey',
+      summary: 'Feedback on our new product line',
+      isPublished: true,
+      startsAt: '2026-02-15',
+      endsAt: '2026-05-15'
+    }
+  ];
   isEditMode: string = '';
   editPollId: number | null = null;
 
@@ -90,7 +123,8 @@ export class Polls implements OnInit, OnDestroy {
   });
 
   ngOnInit() {
-    this.loadAllPolls();
+    // this.loadAllPolls();
+    this.refreshTable();
     this.direction.set(this.translate.currentLang() === 'ar');
     const sub = this.translate.onLangChange.subscribe((event) => {
       this.direction.set(event.lang === 'ar');
@@ -150,30 +184,35 @@ export class Polls implements OnInit, OnDestroy {
     this.pollModel.set({ title: '', summary: '', startsAt: '', endsAt: '' });
   }
 
+  showQuestionsSection = false;
+  currentPollId: number | null = null;
+
   doSave() {
-    if (this.pollForm().invalid()) return;
+    this.currentPollId = 1;
+    this.showQuestionsSection = true;
+    // if (this.pollForm().invalid()) return;
 
-    const payload = this.pollModel();
+    // const payload = this.pollModel();
 
-    if (this.isEditMode === '') {
-      this.pollService.createPoll(payload).subscribe({
-        next: (res) => {
-          this.toastr.success('Poll created successfully.');
-          this.loadAllPolls();
-          this.closeDialog();
-        },
-        error: () => this.toastr.error('Failed to create poll.')
-      });
-    } else {
-      this.pollService.updatePoll(this.editPollId!, payload).subscribe({
-        next: () => {
-          this.toastr.success('Poll updated successfully.');
-          this.loadAllPolls();
-          this.closeDialog();
-        },
-        error: () => this.toastr.error('Failed to update poll.')
-      });
-    }
+    // if (this.isEditMode === '') {
+    //   this.pollService.createPoll(payload).subscribe({
+    //     next: (res) => {
+    //       this.toastr.success('Poll created successfully.');
+    //       this.currentPollId = res.id; // ← مسك الـ id
+    //       this.showQuestionsSection = true; // ← افتح قسم الأسئلة
+    //     },
+    //     error: () => this.toastr.error('Failed to create poll.')
+    //   });
+    // } else {
+    //   this.pollService.updatePoll(this.editPollId!, payload).subscribe({
+    //     next: () => {
+    //       this.toastr.success('Poll updated successfully.');
+    //       this.loadAllPolls();
+    //       this.closeDialog();
+    //     },
+    //     error: () => this.toastr.error('Failed to update poll.')
+    //   });
+    // }
   }
 
   deleteTransaction(row: IPoll) {

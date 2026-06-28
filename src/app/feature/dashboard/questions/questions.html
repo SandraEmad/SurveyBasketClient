@@ -1,1 +1,132 @@
-<p>questions works!</p>
+<div class="questions-container">
+
+  <div class="questions-header">
+    <div class="headerLeft">
+      <div class="usersIcon">
+        <mat-icon>quiz</mat-icon>
+      </div>
+      <div>
+        <h5 class="headerTitleH5">{{ 'questions.title' | translate }}</h5>
+        <span class="headerSubTitle">{{ 'questions.subTitle' | translate }}</span>
+      </div>
+    </div>
+    <div class="headerRight">
+      <button mat-flat-button class="actionBtn" (click)="addQuestion()">
+        <mat-icon>add</mat-icon>
+        {{ 'questions.addQuestion' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading) {
+  <div class="loading-state">
+    <mat-icon>hourglass_empty</mat-icon>
+    <span>{{ 'questions.loading' | translate }}</span>
+  </div>
+  }
+
+  <div cdkDropList (cdkDropListDropped)="dropQuestion($event)" class="questions-list">
+
+    @for (q of questions; track q; let qi = $index) {
+    <div cdkDrag class="question-card">
+
+      <div class="drag-handle" cdkDragHandle>
+        <mat-icon>drag_indicator</mat-icon>
+      </div>
+
+      <div class="question-body">
+
+        <div class="question-header">
+          <span class="question-number">Q{{ qi + 1 }}</span>
+
+          @if (q.isSaved) {
+          <span class="question-preview">{{ q.content }}</span>
+          } @else {
+          <mat-form-field class="question-input">
+            <mat-label>{{ 'questions.content' | translate }}</mat-label>
+            <input matInput [(ngModel)]="q.content" />
+          </mat-form-field>
+          }
+
+          <div class="question-actions">
+            @if (q.id) {
+            <button mat-icon-button
+              [matTooltip]="(q.isActive ? 'users.tooltips.deactivate' : 'users.tooltips.activate') | translate"
+              (click)="toggleStatus(q)">
+              <mat-icon [style.color]="q.isActive ? 'green' : 'gray'">
+                {{ q.isActive ? 'check_circle' : 'cancel' }}
+              </mat-icon>
+            </button>
+            }
+            <button mat-icon-button [matTooltip]="'global.edit' | translate"
+              (click)="q.isSaved = false; q.isExpanded = true">
+              <mat-icon style="color: #3d83ff">edit</mat-icon>
+            </button>
+            <button mat-icon-button [matTooltip]="'global.delete' | translate" (click)="removeQuestion(qi)">
+              <mat-icon style="color: darkred">delete_forever</mat-icon>
+            </button>
+            <button mat-icon-button (click)="q.isExpanded = !q.isExpanded">
+              <mat-icon>{{ q.isExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        @if (q.isExpanded || !q.isSaved) {
+        <div class="answers-section">
+          <div class="answers-label">
+            <mat-icon>radio_button_checked</mat-icon>
+            {{ 'questions.answers' | translate }}
+          </div>
+
+          <div cdkDropList [cdkDropListData]="q.answers" (cdkDropListDropped)="dropAnswer($event, qi)"
+            class="answers-list">
+
+            @for (a of q.answers; track a; let ai = $index) {
+            <div cdkDrag class="answer-row">
+              <mat-icon cdkDragHandle class="answer-drag">drag_indicator</mat-icon>
+
+              @if (q.isSaved) {
+              <mat-icon style="color: #3d83ff; font-size: 20px;">radio_button_unchecked</mat-icon>
+              <span class="answer-text">{{ a.text }}</span>
+              } @else {
+              <mat-form-field class="answer-input">
+                <mat-label>{{ 'questions.answer' | translate }} {{ ai + 1 }}</mat-label>
+                <input matInput [(ngModel)]="a.text" />
+              </mat-form-field>
+              <button mat-icon-button (click)="removeAnswer(qi, ai)" [disabled]="q.answers.length === 1">
+                <mat-icon style="color: darkred">remove_circle</mat-icon>
+              </button>
+              }
+            </div>
+            }
+
+          </div>
+
+          @if (!q.isSaved) {
+          <div class="answers-footer">
+            <button mat-stroked-button (click)="addAnswer(qi)">
+              <mat-icon>add</mat-icon>
+              {{ 'questions.addAnswer' | translate }}
+            </button>
+            <button mat-flat-button class="actionBtn" (click)="saveQuestion(qi)">
+              <mat-icon>save</mat-icon>
+              {{ (q.id ? 'questions.update' : 'questions.save') | translate }}
+            </button>
+          </div>
+          }
+        </div>
+        }
+
+      </div>
+    </div>
+    }
+
+    @if (questions.length === 0 && !isLoading) {
+    <div class="empty-state">
+      <mat-icon>quiz</mat-icon>
+      <p>{{ 'questions.empty' | translate }}</p>
+    </div>
+    }
+
+  </div>
+</div>

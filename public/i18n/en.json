@@ -32,5 +32,38 @@
       "email": "Email",
       "password": "Password"
     }
+  },
+  "polls": {
+    "title": "Polls",
+    "subTitle": "Manage and organize your polls",
+    "addPoll": "Add Poll",
+    "titleField": "Title",
+    "summary": "Summary",
+    "startsAt": "Start Date",
+    "endsAt": "End Date",
+    "isPublished": "Published"
+  },
+  "questions": {
+    "title": "Questions",
+    "subTitle": "Manage poll questions",
+    "addQuestion": "Add Question",
+    "content": "Question Content",
+    "answer": "Answer",
+    "answers": "Answers",
+    "addAnswer": "Add Answer",
+    "save": "Save Question",
+    "update": "Update Question",
+    "loading": "Loading questions...",
+    "empty": "No questions yet. Click \"Add Question\" to start."
+  },
+  "global": {
+    "search": "Search...",
+    "actions": "Actions",
+    "save": "Save",
+    "update": "Update",
+    "cancel": "Cancel",
+    "new": "New",
+    "delete": "Delete",
+    "edit": "Edit"
   }
 }

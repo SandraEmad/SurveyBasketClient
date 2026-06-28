@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  baseUrl: 'https://personal-profiling-and-assistance-app.runasp.net/api/'
+  baseUrl: 'https://survey7-basket.runasp.net/api/V1/Polls'
 };
