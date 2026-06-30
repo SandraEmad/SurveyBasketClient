@@ -322,18 +322,92 @@ button[mat-icon-button]:hover {
   transform: scale(1.08);
 
 }
-
 mat-paginator {
-
-  // margin:20px;
-
+  display: block;
   border-radius: 18px;
-
   background: white;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, .05);
+  overflow: hidden;
 
-  box-shadow:
-    0 8px 25px rgba(0, 0, 0, .05);
+  ::ng-deep .mat-mdc-paginator-container {
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 60px;
+    padding: 0 20px;
+    gap: 16px;
+  }
 
+  // النص على اليمين
+  ::ng-deep .mat-mdc-paginator-range-label {
+    margin: 0;
+    font-size: 13.5px;
+    color: #2f4058;
+    font-weight: 500;
+    direction: ltr;
+    unicode-bidi: isolate;
+    order: 1;
+  }
+
+  // الأسهم + الـ dropdown مع بعض على الشمال
+  ::ng-deep .mat-mdc-paginator-range-actions {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+    order: 2;
+  }
+
+  // الأسهم شكل دائري نضيف
+  ::ng-deep .mat-mdc-icon-button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f3f6fb;
+    transition: .25s;
+  }
+
+  ::ng-deep .mat-mdc-icon-button:not(:disabled):hover {
+    background: #e3edff;
+  }
+
+  ::ng-deep .mat-mdc-icon-button:not(:disabled) .mat-mdc-paginator-icon {
+    fill: #2f4058;
+  }
+
+  ::ng-deep .mat-mdc-icon-button:disabled {
+    opacity: .3;
+  }
+
+  // الـ "items per page" مع الـ select على شكل pill
+  ::ng-deep .mat-mdc-paginator-page-size {
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    gap: 8px;
+    margin: 0;
+    order: 3;
+  }
+
+  ::ng-deep .mat-mdc-paginator-page-size-label {
+    display: none; // نخفي "Items per page" ونخلي بس الرقم زي الصورة
+  }
+
+  ::ng-deep .mat-mdc-paginator-page-size-select {
+    width: auto;
+    margin: 0;
+
+    .mat-mdc-text-field-wrapper {
+      background: #f3f6fb !important;
+      border-radius: 30px !important;
+      padding: 0 14px !important;
+      height: 36px !important;
+    }
+
+    .mdc-notched-outline {
+      display: none;
+    }
+  }
 }
 
 .form-body {
@@ -423,8 +497,55 @@ mat-paginator {
   animation: fadeUp .5s ease;
 }
 
+.form-field, .searchTxt {
+  ::ng-deep .mdc-notched-outline__leading,
+  ::ng-deep .mdc-notched-outline__notch,
+  ::ng-deep .mdc-notched-outline__trailing {
+    border: none !important;
+  }
+}
+.form-field {
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    overflow: visible;
+  }
 
+  ::ng-deep mat-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 
+    margin-top: 6px;
+    padding: 8px 12px;
+
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #d32f2f;
+
+    background: #fdecea;
+    border-radius: 10px;
+    border: 1px solid #f6c6c2;
+
+    animation: errorSlide .25s ease;
+  }
+
+  ::ng-deep mat-error::before {
+    content: "error";
+    font-family: "Material Icons";
+    font-size: 16px;
+    color: #d32f2f;
+  }
+}
+
+@keyframes errorSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 @keyframes fadeUp {
 
   from {
@@ -438,4 +559,10 @@ mat-paginator {
     transform: none;
   }
 
+}
+::ng-deep .mat-column-actionsBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 90px;
 }

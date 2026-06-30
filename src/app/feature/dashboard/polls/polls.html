@@ -15,7 +15,7 @@
         </div>
 
         <div class="headerCenter">
-          <mat-form-field class="searchTxt">
+          <mat-form-field appearance="outline" class="searchTxt">
             <mat-icon matPrefix>search</mat-icon>
             <input matInput [placeholder]="'global.search' | translate"
               (keyup)="applyFilter($any($event.target).value)" />
@@ -61,10 +61,12 @@
           </ng-container>
 
           <ng-container matColumnDef="isPublished">
-            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">{{ 'polls.isPublished' | translate
-              }}</mat-header-cell>
-            <mat-cell *matCellDef="let row" (click)="openDialogEdit(row)" class="mat-row-clickable">
-              <mat-icon [style.color]="row.isPublished ? 'green' : 'gray'">
+            <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">
+              {{ 'polls.isPublished' | translate }}
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row" class="mat-row-clickable">
+              <mat-icon [style.color]="row.isPublished ? 'green' : 'gray'" (click)="togglePublish(row, $event)"
+                style="cursor: pointer;" matTooltip="{{ row.isPublished ? 'Unpublish' : 'Publish' }}">
                 {{ row.isPublished ? 'check_circle' : 'cancel' }}
               </mat-icon>
             </mat-cell>
@@ -126,7 +128,7 @@
 
       <div class="form-body">
         <div class="form-row">
-          <mat-form-field class="form-field">
+          <mat-form-field appearance="outline" class="form-field" >
             <mat-label>{{ 'polls.titleField' | translate }}</mat-label>
             <input matInput [formField]="pollForm.title" />
             @if (pollForm.title().touched() && pollForm.title().invalid()) {
@@ -136,7 +138,7 @@
             }
           </mat-form-field>
 
-          <mat-form-field class="form-field">
+          <mat-form-field appearance="outline" class="form-field">
             <mat-label>{{ 'polls.summary' | translate }}</mat-label>
             <input matInput [formField]="pollForm.summary" />
             @if (pollForm.summary().touched() && pollForm.summary().invalid()) {
@@ -148,7 +150,7 @@
         </div>
 
         <div class="form-row">
-          <mat-form-field class="form-field">
+          <mat-form-field appearance="outline" class="form-field" >
             <mat-label>{{ 'polls.startsAt' | translate }}</mat-label>
             <input matInput [matDatepicker]="startPicker" [formField]="pollForm.startsAt" />
             <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
@@ -159,7 +161,7 @@
             }
             }
           </mat-form-field>
-          <mat-form-field class="form-field">
+          <mat-form-field appearance="outline" class="form-field" >
             <mat-label>{{ 'polls.endsAt' | translate }}</mat-label>
             <input matInput [matDatepicker]="endPicker" [formField]="pollForm.endsAt"
               [min]="pollForm.startsAt().value()" />
@@ -173,7 +175,7 @@
           </mat-form-field>
         </div>
 
-        <div class="form-actions">
+        <div class="form-actions" >
           <button mat-flat-button class="actionBtn" [disabled]="pollForm().invalid()" (click)="doSave()">
             <mat-icon>save</mat-icon>
             {{ (isEditMode ? 'global.update' : 'global.save') | translate }}

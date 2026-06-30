@@ -19,6 +19,7 @@
       "email": "Email",
       "status": "Status",
       "locked": "Locked",
+      "roles": "Roles",
       "actions": "Actions"
     },
     "tooltips": {
@@ -30,7 +31,8 @@
       "firstName": "First Name",
       "lastName": "Last Name",
       "email": "Email",
-      "password": "Password"
+      "password": "Password",
+      "roles": "Roles"
     }
   },
   "polls": {
@@ -55,7 +57,8 @@
     "update": "Update Question",
     "loading": "Loading questions...",
     "empty": "No questions yet. Click \"Add Question\" to start."
-  },"nav": {
+  },
+  "nav": {
     "polls": "Polls",
     "users": "Users",
     "analysis": "Analysis",
@@ -71,6 +74,9 @@
     "cancel": "Cancel",
     "new": "New",
     "delete": "Delete",
-    "edit": "Edit"
+    "edit": "Edit",
+    "confirmDeleteTitle": "Are you sure?",
+    "confirmDeleteText": "This action cannot be undone.",
+    "confirmDeleteBtn": "Yes, delete it"
   }
 }

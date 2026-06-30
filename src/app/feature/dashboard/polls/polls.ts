@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, OnDestroy, ViewChild, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
@@ -16,7 +16,7 @@ import { Poll } from '../../../core/services/poll/poll';
 import { IPoll } from '../../../core/models/polls/Ipoll';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import Swal from 'sweetalert2';
 import {
   form, FormField,
   required, minLength, maxLength, validate
@@ -36,7 +36,8 @@ import { Questions } from "../questions/questions";
     MatDatepickerModule,
     MatNativeDateModule,
     Questions
-],
+  ],
+  providers: [DatePipe],
   templateUrl: './polls.html',
   styleUrl: './polls.scss',
 })
@@ -45,34 +46,35 @@ export class Polls implements OnInit, OnDestroy {
   private readonly toastr = inject(ToastrService);
   private translate = inject(TranslateService);
   private subscription = new Subscription();
+  public datePipe = inject(DatePipe);
 
-  // allPolls: IPoll[] = [];
-  allPolls: any[] = [
-    {
-      id: 1,
-      title: 'Customer Satisfaction Survey',
-      summary: 'Survey about our service quality',
-      isPublished: true,
-      startsAt: '2026-01-01',
-      endsAt: '2026-12-31'
-    },
-    {
-      id: 2,
-      title: 'Employee Feedback Survey',
-      summary: 'Annual employee engagement survey',
-      isPublished: false,
-      startsAt: '2026-03-01',
-      endsAt: '2026-06-30'
-    },
-    {
-      id: 3,
-      title: 'Product Experience Survey',
-      summary: 'Feedback on our new product line',
-      isPublished: true,
-      startsAt: '2026-02-15',
-      endsAt: '2026-05-15'
-    }
-  ];
+  allPolls: IPoll[] = [];
+  // allPolls: any[] = [
+  //   {
+  //     id: 1,
+  //     title: 'Customer Satisfaction Survey',
+  //     summary: 'Survey about our service quality',
+  //     isPublished: true,
+  //     startsAt: '2026-01-01',
+  //     endsAt: '2026-12-31'
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'Employee Feedback Survey',
+  //     summary: 'Annual employee engagement survey',
+  //     isPublished: false,
+  //     startsAt: '2026-03-01',
+  //     endsAt: '2026-06-30'
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'Product Experience Survey',
+  //     summary: 'Feedback on our new product line',
+  //     isPublished: true,
+  //     startsAt: '2026-02-15',
+  //     endsAt: '2026-05-15'
+  //   }
+  // ];
   isEditMode: string = '';
   editPollId: number | null = null;
 
@@ -123,8 +125,6 @@ export class Polls implements OnInit, OnDestroy {
   });
 
   ngOnInit() {
-    // this.loadAllPolls();
-    this.refreshTable();
     this.direction.set(this.translate.currentLang() === 'ar');
     const sub = this.translate.onLangChange.subscribe((event) => {
       this.direction.set(event.lang === 'ar');
@@ -139,6 +139,7 @@ export class Polls implements OnInit, OnDestroy {
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
+    this.loadAllPolls();
   }
 
   refreshTable() {
@@ -150,11 +151,27 @@ export class Polls implements OnInit, OnDestroy {
   applyFilter(filterValue: string) {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
+  togglePublish(row: IPoll, event: Event) {
+    event.stopPropagation();
 
+    this.pollService.togglePublishStatus(row.id!).subscribe({
+      next: (res) => {
+        row.isPublished = res.data?.isPublished ?? !row.isPublished;
+        this.refreshTable();
+        this.toastr.success(res?.messages?.[0]?.text ?? 'Poll status updated.');
+      },
+      error: () => this.toastr.error('Failed to update status.')
+    });
+  }
   openDialog() {
     this.isEditMode = '';
     this.editPollId = null;
-    this.pollModel.set({ title: '', summary: '', startsAt: '', endsAt: '' });
+    this.pollModel.set({
+      title: '',
+      summary: '',
+      startsAt: this.datePipe.transform(new Date(), 'yyyy-MM-dd')!,
+      endsAt: ''
+    });
     this.showEntryForm.set(true);
   }
 
@@ -165,12 +182,15 @@ export class Polls implements OnInit, OnDestroy {
 
     this.pollService.getPollById(row.id!).subscribe({
       next: (res) => {
-        this.pollModel.set({
-          title: res.data.title ?? '',
-          summary: res.data.summary ?? '',
-          startsAt: res.data.startsAt ?? '',
-          endsAt: res.data.endsAt ?? '',
-        });
+        if (res.status == 200) {
+          this.pollModel.set({
+            title: res.data.title ?? '',
+            summary: res.data.summary ?? '',
+            startsAt: res.data.startsAt ?? '',
+            endsAt: res.data.endsAt ?? '',
+          });
+        }
+
       }
     });
   }
@@ -188,44 +208,62 @@ export class Polls implements OnInit, OnDestroy {
   currentPollId: number | null = null;
 
   doSave() {
-    this.currentPollId = 1;
-    this.showQuestionsSection = true;
-    // if (this.pollForm().invalid()) return;
+    if (this.pollForm().invalid()) return;
 
-    // const payload = this.pollModel();
+    const raw = this.pollModel();
+    console.log(raw);
+    const payload: IPoll = {
+      ...raw,
+      startsAt: this.datePipe.transform(raw.startsAt, 'yyyy-MM-dd')!,
+      endsAt: this.datePipe.transform(raw.endsAt, 'yyyy-MM-dd')!,
+    };
+    console.log(payload);
 
-    // if (this.isEditMode === '') {
-    //   this.pollService.createPoll(payload).subscribe({
-    //     next: (res) => {
-    //       this.toastr.success('Poll created successfully.');
-    //       this.currentPollId = res.id; // ← مسك الـ id
-    //       this.showQuestionsSection = true; // ← افتح قسم الأسئلة
-    //     },
-    //     error: () => this.toastr.error('Failed to create poll.')
-    //   });
-    // } else {
-    //   this.pollService.updatePoll(this.editPollId!, payload).subscribe({
-    //     next: () => {
-    //       this.toastr.success('Poll updated successfully.');
-    //       this.loadAllPolls();
-    //       this.closeDialog();
-    //     },
-    //     error: () => this.toastr.error('Failed to update poll.')
-    //   });
-    // }
+    if (this.isEditMode === '') {
+      this.pollService.createPoll(payload).subscribe({
+        next: (res) => {
+          this.toastr.success(res?.messages?.[0]?.text ?? 'Poll created successfully.');
+          this.currentPollId = res.id; // ← مسك الـ id
+          this.showQuestionsSection = true; // ← افتح قسم الأسئلة
+        },
+        error: () => this.toastr.error('Failed to create poll.')
+      });
+    } else {
+      this.pollService.updatePoll(this.editPollId!, payload).subscribe({
+        next: (res) => {
+          this.toastr.success(res?.messages?.[0]?.text ??'Poll updated successfully.');
+          this.loadAllPolls();
+          this.closeDialog();
+        },
+        error: () => this.toastr.error('Failed to update poll.')
+      });
+    }
   }
 
-  deleteTransaction(row: IPoll) {
-    this.pollService.deletePoll(row.id!).subscribe({
-      next: () => {
-        this.toastr.success('Poll deleted successfully.');
-        this.allPolls = this.allPolls.filter(p => p.id !== row.id);
-        this.refreshTable();
-      },
-      error: () => this.toastr.error('Failed to delete poll.')
-    });
-  }
-
+deleteTransaction(row: IPoll) {
+  Swal.fire({
+    title: this.translate.instant('global.confirmDeleteTitle'),
+    text: this.translate.instant('global.confirmDeleteText'),
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d32f2f',
+    cancelButtonColor: '#67b0ff',
+    confirmButtonText: this.translate.instant('global.confirmDeleteBtn'),
+    cancelButtonText: this.translate.instant('global.cancel'),
+    reverseButtons: this.direction(), // يقلب أماكن الأزرار لو RTL
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.pollService.deletePoll(row.id!).subscribe({
+        next: (res) => {
+          this.toastr.success(res?.messages?.[0]?.text ?? 'Poll deleted successfully.');
+          this.allPolls = this.allPolls.filter(p => p.id !== row.id);
+          this.refreshTable();
+        },
+        error: () => this.toastr.error('Failed to delete poll.')
+      });
+    }
+  });
+}
   loadAllPolls() {
     this.subscription.add(
       this.pollService.getAllPoll().subscribe({
@@ -233,6 +271,7 @@ export class Polls implements OnInit, OnDestroy {
           if (res.status === 200) {
             this.allPolls = res.data;
             this.refreshTable();
+            this.toastr.success(res?.messages?.[0]?.text ?? 'Polls loaded successfully.');
           }
         },
         error: () => this.activeMask.set(false)

@@ -10,27 +10,27 @@ export class User {
   private readonly baseUrl = environment.baseUrl;
 
   getAllUser(): Observable<any> {
-    return this.httpClient.get(this.baseUrl);
+    return this.httpClient.get(`${this.baseUrl}/Users`);
   }
 
   getUserById(id: string): Observable<any> {
-    return this.httpClient.get(`${this.baseUrl}/GetById/${id}`);
+    return this.httpClient.get(`${this.baseUrl}/Users/GetById/${id}`);
   }
 
   createUser(user: IUser): Observable<any> {
-    return this.httpClient.post(this.baseUrl, user);
+    return this.httpClient.post(`${this.baseUrl}/Users`, user);
   }
 
-  updateUser(id: string, user: IUser): Observable<IUser> {
-    return this.httpClient.put<IUser>(`${this.baseUrl}/${id}`, user);
+  updateUser(id: string, user: IUser): Observable<any> {
+    return this.httpClient.put<IUser>(`${this.baseUrl}/Users/${id}`, user);
   }
 
-  toggleStatus(id: string): Observable<any> {
-    return this.httpClient.put(`${this.baseUrl}/${id}/toggle-status`, {});
+  toggleStatus(id: string, user: IUser): Observable<any> {
+    return this.httpClient.put(`${this.baseUrl}/Users/${id}/toggle-status`, user);
   }
 
-  unlock(id: string): Observable<any> {
-    return this.httpClient.put(`${this.baseUrl}/${id}/unlock`, {});
+  unlock(id: string, user: IUser): Observable<any> {
+    return this.httpClient.put(`${this.baseUrl}/Users/${id}/unlock`,user);
   }
 
 }

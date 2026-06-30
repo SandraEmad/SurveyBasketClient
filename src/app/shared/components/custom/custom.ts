@@ -8,15 +8,15 @@ import { Color } from '../../../core/services/color/color';
   styleUrl: './custom.scss',
 })
 export class Custom {
-  private colorService = inject(Color); // استدعاء الخدمة
-  isPaletteVisible: boolean = false; // حالة ظهور لوحة الألوان
+  // private colorService = inject(Color); // استدعاء الخدمة
+  // isPaletteVisible: boolean = false; // حالة ظهور لوحة الألوان
 
-  togglePalette(): void {
-    this.isPaletteVisible = !this.isPaletteVisible;
-  }
+  // togglePalette(): void {
+  //   this.isPaletteVisible = !this.isPaletteVisible;
+  // }
 
-  changeColor(color: string):  {
-    this.colorService.setColor(color); // نبعث اللون للخدمة
-    this.isPaletteVisible = false;
-  }
+  // changeColor(color: string):  {
+  //   this.colorService.setColor(color); // نبعث اللون للخدمة
+  //   this.isPaletteVisible = false;
+  // }
 }
