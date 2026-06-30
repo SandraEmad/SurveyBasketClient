@@ -5,10 +5,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { Users } from "./feature/dashboard/users/users";
 import { Polls } from "./feature/dashboard/polls/polls";
+import { DashboardLayout } from "./layout/dashboard-layout/dashboard-layout";
 
 @Component({
   selector: 'app-root',
-  imports: [NgxSpinnerModule,Polls],
+  imports: [NgxSpinnerModule, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

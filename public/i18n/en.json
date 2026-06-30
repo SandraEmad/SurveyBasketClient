@@ -55,6 +55,13 @@
     "update": "Update Question",
     "loading": "Loading questions...",
     "empty": "No questions yet. Click \"Add Question\" to start."
+  },"nav": {
+    "polls": "Polls",
+    "users": "Users",
+    "analysis": "Analysis",
+    "logout": "Logout",
+    "language": "Switch Language",
+    "darkMode": "Toggle Dark Mode"
   },
   "global": {
     "search": "Search...",

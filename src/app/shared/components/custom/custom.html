@@ -1,0 +1,18 @@
+<div class="settings-icon" (click)="togglePalette()">
+  <i class="fa-solid fa-gear"></i>
+</div>
+
+<div class="color-palette" [ngClass]="{'show': isPaletteVisible}">
+  <div class="color-option" style="background-color: #ffb3b3;" (click)="changeColor('#ffb3b3')"></div>
+  <div class="color-option" style="background-color: #3498db;" (click)="changeColor('#3498db')"></div>
+  <div class="color-option" style="background-color: #a3d5f7;" (click)="changeColor('#a3d5f7')"></div>
+  <!-- أزرق فاتح -->
+
+
+  <div class="color-option" style="background-color: #2ecc71;" (click)="changeColor('#2ecc71')"></div>
+  <!-- أخضر حيوي -->
+
+  <div class="color-option" style="background-color: #486481;" (click)="changeColor('#34495e')"></div>
+  <!-- كحلي داكن -->
+
+</div>

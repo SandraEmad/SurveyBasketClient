@@ -1,1 +1,82 @@
-<p>dashboard-layout works!</p>
+<div class="layout-wrapper" [class.sidebar-collapsed]="isSidebarCollapsed" [dir]="currentDir">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="isSidebarCollapsed">
+
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <mat-icon>poll</mat-icon>
+        </div>
+        <span class="brand-name">SurveyBasket</span>
+      </div>
+      <button mat-icon-button class="collapse-btn" (click)="toggleSidebar()">
+        <mat-icon>{{ isSidebarCollapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item" routerLink="/dashboard/polls" routerLinkActive="active">
+        <mat-icon>poll</mat-icon>
+        <span class="nav-label">{{ 'nav.polls' | translate }}</span>
+      </a>
+      <a class="nav-item" routerLink="/dashboard/users" routerLinkActive="active">
+        <mat-icon>group</mat-icon>
+        <span class="nav-label">{{ 'nav.users' | translate }}</span>
+      </a>
+      <a class="nav-item" routerLink="/dashboard/analytics" routerLinkActive="active">
+        <mat-icon>bar_chart</mat-icon>
+        <span class="nav-label">{{ 'nav.analysis' | translate }}</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="nav-item logout-btn" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span class="nav-label">{{ 'nav.logout' | translate }}</span>
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- Overlay for mobile -->
+  <div class="sidebar-overlay" [class.active]="!isSidebarCollapsed && isMobile" (click)="toggleSidebar()">
+  </div>
+
+  <!-- Main -->
+  <div class="main-wrapper">
+
+    <!-- Navbar -->
+    <header class="navbar">
+      <div class="navbar-left">
+        <button mat-icon-button (click)="toggleSidebar()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      </div>
+
+      <div class="navbar-right">
+        <button mat-icon-button [matTooltip]="'nav.language' | translate" (click)="toggleLang()">
+          <mat-icon>translate</mat-icon>
+        </button>
+        <button mat-icon-button [matTooltip]="'nav.darkMode' | translate" (click)="toggleDark()">
+          <mat-icon>{{ isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        </button>
+        <div class="user-avatar" [matMenuTriggerFor]="userMenu">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+        <mat-menu #userMenu="matMenu">
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            {{ 'nav.logout' | translate }}
+          </button>
+        </mat-menu>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+</div>
