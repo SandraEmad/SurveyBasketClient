@@ -1,4 +1,4 @@
-import { Component, inject, HostListener, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, HostListener, OnInit, OnDestroy, signal } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,14 +8,30 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { Direction } from '@angular/cdk/bidi';
 
+import {
+  form,
+  Field,
+  FormField,
+  required,
+  email,
+  minLength,
+  maxLength,
+  pattern,
+} from '@angular/forms/signals';
+import { MatDialog } from '@angular/material/dialog';
+import { AccountDialog } from '../../feature/dashboard/account-dialog/account-dialog';
 @Component({
   selector: 'app-dashboard-layout',
   imports: [
     CommonModule,
-    RouterOutlet, RouterLink, RouterLinkActive,
-    MatIconModule, MatButtonModule,
-    MatTooltipModule, MatMenuModule,
-    TranslatePipe
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatMenuModule,
+    TranslatePipe,
   ],
   templateUrl: './dashboard-layout.html',
   styleUrl: './dashboard-layout.scss',
@@ -23,10 +39,10 @@ import { Direction } from '@angular/cdk/bidi';
 export class DashboardLayout implements OnInit, OnDestroy {
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
-
   isSidebarCollapsed = false;
   isMobile = false;
   isDark = false;
+
   currentDir: Direction = 'rtl';
 
   @HostListener('window:resize')
@@ -48,14 +64,14 @@ export class DashboardLayout implements OnInit, OnDestroy {
     this.translate.use(savedLang);
   }
 
-  ngOnDestroy() { }
+  ngOnDestroy() {}
 
   checkMobile() {
     this.isMobile = window.innerWidth < 768;
     this.isSidebarCollapsed = this.isMobile;
 
     if (this.isMobile) {
-       this.isSidebarCollapsed = true;
+      this.isSidebarCollapsed = true;
     }
   }
 
@@ -80,6 +96,13 @@ export class DashboardLayout implements OnInit, OnDestroy {
 
   applyDark() {
     document.body.classList.toggle('dark-mode', this.isDark);
+  }
+ private dialog = inject(MatDialog);
+
+  openProfileDialog(): void {
+    this.dialog.open(AccountDialog, {
+      width: '480px',
+    });
   }
 
   logout() {

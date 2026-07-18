@@ -1,0 +1,99 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon>account_circle</mat-icon>
+  {{ 'account.title' | translate }}
+</h2>
+
+<mat-dialog-content class="dialog-content">
+
+    <mat-tab-group animationDuration="150ms">
+      <!-- تبويب البيانات -->
+      <mat-tab [label]="'account.profileTab' | translate">
+        <div class="tab-content">
+          <div class="readonly-row">
+            <span class="label">{{ 'account.email' | translate }}</span>
+            <span class="value">{{ email() }}</span>
+          </div>
+          <div class="readonly-row">
+            <span class="label">{{ 'account.username' | translate }}</span>
+            <span class="value">{{ userName() }}</span>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'account.firstName' | translate }}</mat-label>
+            <input matInput [formField]="profileForm.firstName" />
+            @if (profileForm.firstName().touched() && profileForm.firstName().invalid()) {
+              @for (error of profileForm.firstName().errors(); track error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'account.lastName' | translate }}</mat-label>
+            <input matInput [formField]="profileForm.lastName" />
+            @if (profileForm.lastName().touched() && profileForm.lastName().invalid()) {
+              @for (error of profileForm.lastName().errors(); track error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            }
+          </mat-form-field>
+
+          <button
+            mat-raised-button
+            color="primary"
+            class="submit-btn"
+            [disabled]="isSavingProfile() || profileForm().invalid()"
+            (click)="saveProfile()"
+          >
+            @if (isSavingProfile()) {
+            } @else {
+              {{ 'account.save' | translate }}
+            }
+          </button>
+        </div>
+      </mat-tab>
+
+      <!-- تبويب تغيير الباسورد -->
+      <mat-tab [label]="'account.passwordTab' | translate">
+        <div class="tab-content">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'account.currentPassword' | translate }}</mat-label>
+            <input matInput type="password" [formField]="passwordForm.currentPassword" />
+            @if (passwordForm.currentPassword().touched() && passwordForm.currentPassword().invalid()) {
+              @for (error of passwordForm.currentPassword().errors(); track error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ 'account.newPassword' | translate }}</mat-label>
+            <input matInput type="password" [formField]="passwordForm.newPassword" />
+            @if (passwordForm.newPassword().touched() && passwordForm.newPassword().invalid()) {
+              @for (error of passwordForm.newPassword().errors(); track error) {
+                <mat-error>{{ error.message }}</mat-error>
+              }
+            }
+          </mat-form-field>
+
+          <button
+            mat-raised-button
+            color="primary"
+            class="submit-btn"
+            [disabled]="isChangingPassword() || passwordForm().invalid()"
+            (click)="submitChangePassword()"
+          >
+            @if (isChangingPassword()) {
+            } @else {
+              {{ 'account.changePassword' | translate }}
+            }
+          </button>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">{{ 'account.close' | translate }}</button>
+</mat-dialog-actions>

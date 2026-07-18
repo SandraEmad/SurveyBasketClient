@@ -3,31 +3,29 @@ import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-
 @Service()
 export class Question {
   private readonly httpClient = inject(HttpClient);
-  private readonly baseUrl = `${environment.baseUrl}/Question`;
+  private readonly baseUrl = `${environment.baseUrl}/api/Question`;
 
-  getAllQuestion(pollId: number, pageNumber = 1, pageSize = 10): Observable<any> {
-    const params = new HttpParams()
-      .set('pollId', pollId)
-      .set('pageNumber', pageNumber)
-      .set('pageSize', pageSize);
-    return this.httpClient.get(`${this.baseUrl}/GetByPollId`, { params });
-  }
+getAllQuestion(pollId: number, body: any): Observable<any> {
+  return this.httpClient.request('GET', this.baseUrl, {
+    params: { pollId },
+    body
+  });
+}
 
   getById(pollId: number, id: number): Observable<any> {
     const params = new HttpParams().set('pollId', pollId).set('id', id);
     return this.httpClient.get(`${this.baseUrl}/GetByPollId`, { params });
   }
 
-  createQuestion(pollId: number, payload: { content: string; answers: string[] }): Observable<any> {
+  createQuestion(pollId: number, question: any): Observable<any> {
     const params = new HttpParams().set('pollId', pollId);
-    return this.httpClient.post(this.baseUrl, payload, { params });
+    return this.httpClient.post(this.baseUrl, question, { params });
   }
 
-  updateQuestion(pollId: number, id: number, payload: { content: string; answers: string[] }): Observable<any> {
+  updateQuestion(pollId: number, id: number, payload: any): Observable<any> {
     const params = new HttpParams().set('pollId', pollId).set('id', id);
     return this.httpClient.put(`${this.baseUrl}/Update`, payload, { params });
   }
@@ -35,10 +33,5 @@ export class Question {
   toggleStatus(pollId: number, id: number): Observable<any> {
     const params = new HttpParams().set('pollId', pollId).set('id', id);
     return this.httpClient.put(`${this.baseUrl}/ToggleStatus`, {}, { params });
-  }
-
-  deleteQuestion(pollId: number, id: number): Observable<any> {
-    const params = new HttpParams().set('pollId', pollId).set('id', id);
-    return this.httpClient.delete(this.baseUrl, { params });
   }
 }

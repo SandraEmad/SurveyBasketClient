@@ -17,25 +17,28 @@ import { IPoll } from '../../../core/models/polls/Ipoll';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import Swal from 'sweetalert2';
-import {
-  form, FormField,
-  required, minLength, maxLength, validate
-} from '@angular/forms/signals';
-import { Questions } from "../questions/questions";
+import { form, FormField, required, minLength, maxLength, validate } from '@angular/forms/signals';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-polls',
   standalone: true,
   imports: [
     CommonModule,
-    MatTableModule, MatPaginatorModule, MatSortModule,
-    MatCardModule, MatFormFieldModule, MatInputModule,
-    MatButtonModule, MatIconModule, MatTooltipModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
     TranslatePipe,
     FormField,
     MatDatepickerModule,
     MatNativeDateModule,
-    Questions
   ],
   providers: [DatePipe],
   templateUrl: './polls.html',
@@ -47,6 +50,8 @@ export class Polls implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private subscription = new Subscription();
   public datePipe = inject(DatePipe);
+  public readonly router = inject(Router);
+  
 
   allPolls: IPoll[] = [];
   // allPolls: any[] = [
@@ -75,14 +80,22 @@ export class Polls implements OnInit, OnDestroy {
   //     endsAt: '2026-05-15'
   //   }
   // ];
-  isEditMode: string = '';
+  isEditMode = signal<'' | 'edit'>('');
   editPollId: number | null = null;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   dataSource = new MatTableDataSource<IPoll>([]);
-  displayedColumns = ['index', 'title', 'summary', 'isPublished', 'startsAt', 'endsAt', 'actionsBtn'];
+  displayedColumns = [
+    'index',
+    'title',
+    'summary',
+    'isPublished',
+    'startsAt',
+    'endsAt',
+    'actionsBtn',
+  ];
 
   showEntryForm = signal(false);
   activeMask = signal(false);
@@ -110,7 +123,8 @@ export class Polls implements OnInit, OnDestroy {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const start = new Date(value());
-      if (start < today) return [{ kind: 'minDate', message: 'Start date must be today or later.' }];
+      if (start < today)
+        return [{ kind: 'minDate', message: 'Start date must be today or later.' }];
       return undefined;
     });
 
@@ -160,23 +174,23 @@ export class Polls implements OnInit, OnDestroy {
         this.refreshTable();
         this.toastr.success(res?.messages?.[0]?.text ?? 'Poll status updated.');
       },
-      error: () => this.toastr.error('Failed to update status.')
+      error: () => this.toastr.error('Failed to update status.'),
     });
   }
   openDialog() {
-    this.isEditMode = '';
+    this.isEditMode.set('');
     this.editPollId = null;
     this.pollModel.set({
       title: '',
       summary: '',
       startsAt: this.datePipe.transform(new Date(), 'yyyy-MM-dd')!,
-      endsAt: ''
+      endsAt: '',
     });
     this.showEntryForm.set(true);
   }
 
   openDialogEdit(row: IPoll) {
-    this.isEditMode = 'edit';
+    this.isEditMode.set('edit');
     this.editPollId = row.id!;
     this.showEntryForm.set(true);
 
@@ -190,8 +204,7 @@ export class Polls implements OnInit, OnDestroy {
             endsAt: res.data.endsAt ?? '',
           });
         }
-
-      }
+      },
     });
   }
 
@@ -219,63 +232,74 @@ export class Polls implements OnInit, OnDestroy {
     };
     console.log(payload);
 
-    if (this.isEditMode === '') {
+    if (this.isEditMode() === '') {
       this.pollService.createPoll(payload).subscribe({
         next: (res) => {
-          this.toastr.success(res?.messages?.[0]?.text ?? 'Poll created successfully.');
-          this.currentPollId = res.id; // ← مسك الـ id
-          this.showQuestionsSection = true; // ← افتح قسم الأسئلة
+          if (res.status === 201) {
+            this.toastr.success(res?.messages?.[0]?.text ?? 'Poll created successfully.');
+            this.loadAllPolls();
+            this.closeDialog();
+            this.isEditMode.set('edit');
+          }
         },
-        error: () => this.toastr.error('Failed to create poll.')
+        error: () => this.toastr.error('Failed to create poll.'),
       });
     } else {
       this.pollService.updatePoll(this.editPollId!, payload).subscribe({
         next: (res) => {
-          this.toastr.success(res?.messages?.[0]?.text ??'Poll updated successfully.');
-          this.loadAllPolls();
-          this.closeDialog();
+          if (res.status === 200) {
+            this.toastr.success(res?.messages?.[0]?.text ?? 'Poll updated successfully.');
+            this.loadAllPolls();
+            this.closeDialog();
+          }
         },
-        error: () => this.toastr.error('Failed to update poll.')
+        error: () => this.toastr.error('Failed to update poll.'),
       });
     }
   }
 
-deleteTransaction(row: IPoll) {
-  Swal.fire({
-    title: this.translate.instant('global.confirmDeleteTitle'),
-    text: this.translate.instant('global.confirmDeleteText'),
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d32f2f',
-    cancelButtonColor: '#67b0ff',
-    confirmButtonText: this.translate.instant('global.confirmDeleteBtn'),
-    cancelButtonText: this.translate.instant('global.cancel'),
-    reverseButtons: this.direction(), // يقلب أماكن الأزرار لو RTL
-  }).then((result) => {
-    if (result.isConfirmed) {
-      this.pollService.deletePoll(row.id!).subscribe({
-        next: (res) => {
-          this.toastr.success(res?.messages?.[0]?.text ?? 'Poll deleted successfully.');
-          this.allPolls = this.allPolls.filter(p => p.id !== row.id);
-          this.refreshTable();
-        },
-        error: () => this.toastr.error('Failed to delete poll.')
-      });
-    }
-  });
-}
+  deleteTransaction(row: IPoll) {
+    Swal.fire({
+      title: this.translate.instant('global.confirmDeleteTitle'),
+      text: this.translate.instant('global.confirmDeleteText'),
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d32f2f',
+      cancelButtonColor: '#67b0ff',
+      confirmButtonText: this.translate.instant('global.confirmDeleteBtn'),
+      cancelButtonText: this.translate.instant('global.cancel'),
+      reverseButtons: this.direction(),
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.pollService.deletePoll(row.id!).subscribe({
+          next: (res) => {
+            this.toastr.success(res?.messages?.[0]?.text ?? 'Poll deleted successfully.');
+            this.allPolls = this.allPolls.filter((p) => p.id !== row.id);
+            this.refreshTable();
+          },
+          error: () => this.toastr.error('Failed to delete poll.'),
+        });
+      }
+    });
+  }
   loadAllPolls() {
     this.subscription.add(
       this.pollService.getAllPoll().subscribe({
         next: (res) => {
           if (res.status === 200) {
             this.allPolls = res.data;
+            this.allPolls = this.allPolls.reverse();
             this.refreshTable();
             this.toastr.success(res?.messages?.[0]?.text ?? 'Polls loaded successfully.');
           }
         },
-        error: () => this.activeMask.set(false)
-      })
+        error: () => this.activeMask.set(false),
+      }),
     );
+  }
+
+  openQuestions(row: IPoll, event: Event) {
+    event.stopPropagation();
+    this.router.navigate(['/dashboard/polls', row.id, 'questions']);
   }
 }

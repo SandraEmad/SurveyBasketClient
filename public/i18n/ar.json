@@ -67,6 +67,19 @@
     "logout": "تسجيل الخروج",
     "language": "تغيير اللغة",
     "darkMode": "الوضع الداكن"
+  },  "account": {
+    "title": "بيانات الحساب",
+    "email": "البريد الإلكتروني",
+    "username": "اسم المستخدم",
+    "firstName": "الاسم الأول",
+    "lastName": "الاسم الأخير",
+    "profileTab": "البيانات الشخصية",
+    "passwordTab": "تغيير كلمة السر",
+    "currentPassword": "كلمة السر الحالية",
+    "newPassword": "كلمة السر الجديدة",
+    "save": "حفظ",
+    "changePassword": "تغيير كلمة السر",
+    "close": "إغلاق"
   },
   "global": {
     "search": "بحث...",

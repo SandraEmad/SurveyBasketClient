@@ -1,8 +1,6 @@
 <div class="layout-wrapper" [class.sidebar-collapsed]="isSidebarCollapsed" [dir]="currentDir">
-
   <!-- Sidebar -->
   <aside class="sidebar" [class.collapsed]="isSidebarCollapsed">
-
     <div class="sidebar-header">
       <div class="brand">
         <div class="brand-icon">
@@ -36,16 +34,17 @@
         <span class="nav-label">{{ 'nav.logout' | translate }}</span>
       </button>
     </div>
-
   </aside>
 
   <!-- Overlay for mobile -->
-  <div class="sidebar-overlay" [class.active]="!isSidebarCollapsed && isMobile" (click)="toggleSidebar()">
-  </div>
+  <div
+    class="sidebar-overlay"
+    [class.active]="!isSidebarCollapsed && isMobile"
+    (click)="toggleSidebar()"
+  ></div>
 
   <!-- Main -->
   <div class="main-wrapper">
-
     <!-- Navbar -->
     <header class="navbar">
       <div class="navbar-left">
@@ -65,6 +64,10 @@
           <mat-icon>account_circle</mat-icon>
         </div>
         <mat-menu #userMenu="matMenu">
+          <button mat-menu-item (click)="openProfileDialog()">
+            <mat-icon>person</mat-icon>
+            {{ 'nav.editProfile' | translate }}
+          </button>
           <button mat-menu-item (click)="logout()">
             <mat-icon>logout</mat-icon>
             {{ 'nav.logout' | translate }}
@@ -77,6 +80,5 @@
     <main class="content">
       <router-outlet></router-outlet>
     </main>
-
   </div>
 </div>

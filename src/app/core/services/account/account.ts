@@ -10,14 +10,13 @@ export class Account {
    private readonly baseUrl = environment.baseUrl;
 
     getProfileData(): Observable<any> {
-      return this.httpClient.get(`${this.baseUrl}/profile-data`);
+      return this.httpClient.get(`${this.baseUrl}/me/profile`);
     }
 
-     UpdateProfile(photo: object): Observable<any> {
-      return this.httpClient.put(`${this.baseUrl}/upload-photo`, photo);
+     UpdateProfile(account: object): Observable<any> {
+      return this.httpClient.put(`${this.baseUrl}/me/profile`, account);
     }
-
-      changePassword(password: string, newPassword: string): Observable<any> {
-      return this.httpClient.patch(`${this.baseUrl}/change-password`, { password, newPassword,});
+      changePassword(currentPassword: string, newPassword: string): Observable<any> {
+      return this.httpClient.post(`${this.baseUrl}/me/change-password`, { currentPassword, newPassword});
     }
 }

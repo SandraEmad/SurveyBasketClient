@@ -11,10 +11,14 @@
       </div>
     </div>
     <div class="headerRight">
-      <button mat-flat-button class="actionBtn" (click)="addQuestion()">
-        <mat-icon>add</mat-icon>
-        {{ 'questions.addQuestion' | translate }}
-      </button>
+         <button mat-flat-button class="actionBtn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      {{ 'users.back' | translate }}
+    </button>
+    <button mat-flat-button class="actionBtn" (click)="addQuestion()">
+      <mat-icon>add</mat-icon>
+      {{ 'questions.addQuestion' | translate }}
+    </button>
     </div>
   </div>
 
@@ -47,22 +51,12 @@
             <input matInput [(ngModel)]="q.content" />
           </mat-form-field>
           }
-
           <div class="question-actions">
-            @if (q.id) {
-            <button mat-icon-button
-              [matTooltip]="(q.isActive ? 'users.tooltips.deactivate' : 'users.tooltips.activate') | translate"
-              (click)="toggleStatus(q)">
-              <mat-icon [style.color]="q.isActive ? 'green' : 'gray'">
-                {{ q.isActive ? 'check_circle' : 'cancel' }}
-              </mat-icon>
-            </button>
-            }
             <button mat-icon-button [matTooltip]="'global.edit' | translate"
               (click)="q.isSaved = false; q.isExpanded = true">
               <mat-icon style="color: #3d83ff">edit</mat-icon>
             </button>
-            <button mat-icon-button [matTooltip]="'global.delete' | translate" (click)="removeQuestion(qi)">
+            <button mat-icon-button [matTooltip]="'global.delete' | translate" (click)="toggleStatus(q)">
               <mat-icon style="color: darkred">delete_forever</mat-icon>
             </button>
             <button mat-icon-button (click)="q.isExpanded = !q.isExpanded">
@@ -87,11 +81,11 @@
 
               @if (q.isSaved) {
               <mat-icon style="color: #3d83ff; font-size: 20px;">radio_button_unchecked</mat-icon>
-              <span class="answer-text">{{ a.text }}</span>
+              <span class="answer-content">{{ a.content }}</span>
               } @else {
               <mat-form-field class="answer-input">
                 <mat-label>{{ 'questions.answer' | translate }} {{ ai + 1 }}</mat-label>
-                <input matInput [(ngModel)]="a.text" />
+                <input matInput [(ngModel)]="a.content" />
               </mat-form-field>
               <button mat-icon-button (click)="removeAnswer(qi, ai)" [disabled]="q.answers.length === 1">
                 <mat-icon style="color: darkred">remove_circle</mat-icon>
