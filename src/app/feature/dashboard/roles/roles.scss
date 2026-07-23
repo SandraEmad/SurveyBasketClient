@@ -1,0 +1,49 @@
+.addResourceRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  .form-field {
+    flex: 1;
+  }
+}
+
+.permissionsPanel {
+  width: 100%;
+}
+
+.permissionGroup {
+  border: 1px solid #e3edff;
+  border-radius: 16px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  background: white;
+}
+
+.permissionGroupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #f7faff;
+}
+
+.permissionGroupTitle {
+  font-weight: 600;
+  font-size: 14px;
+  color: #2f4058;
+  text-transform: capitalize;
+}
+
+.permissionGroupBody {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  padding: 12px 16px;
+}
+
+.permissionsError {
+  display: block;
+  margin-top: 6px;
+}

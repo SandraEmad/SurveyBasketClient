@@ -65,8 +65,10 @@
     "users": "المستخدمون",
     "analysis": "التحليلات",
     "logout": "تسجيل الخروج",
+    "editProfile":"تعديل الملف الشخصي",
     "language": "تغيير اللغة",
-    "darkMode": "الوضع الداكن"
+    "darkMode": "الوضع الداكن",
+    "roles": "الصلاحيات"
   },  "account": {
     "title": "بيانات الحساب",
     "email": "البريد الإلكتروني",
@@ -80,6 +82,40 @@
     "save": "حفظ",
     "changePassword": "تغيير كلمة السر",
     "close": "إغلاق"
+  },  "roles": {
+    "title": "الصلاحيات",
+    "subTitle": "إدارة الأدوار والصلاحيات",
+    "search": "بحث عن دور...",
+    "addRole": "إضافة دور",
+    "refresh": "تحديث",
+    "editRole": "تعديل الدور",
+    "updateRole": "تحديث بيانات الدور",
+    "createRole": "إنشاء دور جديد",
+    "back": "رجوع",
+    "save": "حفظ",
+    "update": "تحديث",
+    "cancel": "إلغاء",
+    "columns": {
+      "series": "#",
+      "name": "الاسم",
+      "actions": "الإجراءات"
+    },
+    "tooltips": {
+      "activate": "تفعيل الدور",
+      "deactivate": "تعطيل الدور"
+    },
+    "confirmActivateText": "سيتم تفعيل هذا الدور مرة أخرى.",
+    "confirmDeactivateText": "سيتم تعطيل هذا الدور.",
+    "form": {
+      "name": "اسم الدور",
+      "permissions": "الصلاحيات",
+      "resourceName": "اسم المورد",
+      "addResource": "إضافة مورد"
+    },
+    "errors": {
+      "nameRequired": "اسم الدور مطلوب.",
+      "permissionsRequired": "يجب اختيار صلاحية واحدة على الأقل."
+    }
   },
   "global": {
     "search": "بحث...",

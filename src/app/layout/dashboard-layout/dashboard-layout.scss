@@ -316,6 +316,7 @@ body.dark-mode {
     background: #0f1724;
   }
 }
+
 // RTL sidebar
 .layout-wrapper[dir="rtl"] .sidebar {
   left: auto;
@@ -389,5 +390,177 @@ body.dark-mode {
   .main-wrapper {
     margin-left: 0 !important;
     margin-right: 0 !important;
+  }
+}
+
+// ── Dark mode ─────────────────────────────────
+body.dark-mode {
+  .layout-wrapper {
+    background: #0f1724;
+  }
+
+  .navbar {
+    background: #1a2535;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, .3);
+
+    button {
+      color: #a0b4d0;
+    }
+  }
+
+  .content {
+    background: #0f1724;
+  }
+
+  body.dark-mode {
+    .layout-wrapper {
+      background: #0f1724;
+    }
+
+    .navbar {
+      background: #1a2535;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, .3);
+
+      button {
+        color: #a0b4d0;
+      }
+    }
+
+    .content {
+      background: #0f1724;
+    }
+
+    // الشريط السفلي في الموبايل
+    @media (max-width: 768px) {
+      .sidebar {
+        background: linear-gradient(180deg, #1a2535 0%, #0f1724 100%);
+        box-shadow: 0 -2px 20px rgba(0, 0, 0, .4);
+      }
+
+      .nav-item {
+        color: rgba(255, 255, 255, .55);
+
+        &:hover {
+          background: rgba(255, 255, 255, .08);
+        }
+
+        &.active {
+          background: rgba(255, 255, 255, .15);
+          box-shadow: none;
+        }
+      }
+    }
+  }
+}
+
+// ── Responsive: تحويل السايدبار لـ Bottom Tab Bar ──
+@media (max-width: 768px) {
+
+  // ── Navbar في الموبايل ──
+  .navbar {
+    padding: 0 14px;
+    height: 58px;
+  }
+
+  .navbar-left,
+  .navbar-right {
+    gap: 2px;
+  }
+
+  .navbar-right button[mat-icon-button] {
+    width: 38px;
+    height: 38px;
+  }
+
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+  }
+
+  .sidebar {
+    top: auto;
+    bottom: 0;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: 64px;
+    flex-direction: row;
+    box-shadow: 0 -4px 20px rgba(75, 143, 249, .2);
+    transition: none;
+
+    &.collapsed {
+      width: 100% !important;
+    }
+  }
+
+  .sidebar-header {
+    display: none;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+    gap: 0;
+    height: 100%;
+  }
+
+  .sidebar-footer {
+    padding: 0;
+    border-top: none;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-item {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 8px;
+    border-radius: 0;
+    font-size: 10px;
+    height: 100%;
+    width: auto;
+    white-space: normal;
+    text-align: center;
+
+    mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+    }
+
+    &:hover,
+    &.active {
+      transform: none !important;
+      box-shadow: none;
+    }
+  }
+
+  [dir="ltr"] .nav-item:hover,
+  [dir="rtl"] .nav-item:hover {
+    transform: none;
+  }
+
+  .nav-label {
+    opacity: 1 !important;
+    width: auto !important;
+    font-size: 10px;
+  }
+
+  // مبقاش محتاجين الـ overlay خالص، البار ثابت وباين دايمًا
+  .sidebar-overlay {
+    display: none !important;
+  }
+
+  // المحتوى ياخد العرض كامل، ونسيب مسافة تحت عشان الـ bottom bar
+  .main-wrapper {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-bottom: 64px;
   }
 }

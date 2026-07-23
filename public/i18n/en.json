@@ -63,8 +63,45 @@
     "users": "Users",
     "analysis": "Analysis",
     "logout": "Logout",
+    "editProfile":"Edit Profile",
     "language": "Switch Language",
-    "darkMode": "Toggle Dark Mode"
+    "darkMode": "Toggle Dark Mode",
+    "roles": "Roles"
+  },
+ "roles": {
+    "title": "Roles",
+    "subTitle": "Manage roles and permissions",
+    "search": "Search roles...",
+    "addRole": "Add role",
+    "refresh": "Refresh",
+    "editRole": "Edit role",
+    "updateRole": "Update role details",
+    "createRole": "Create a new role",
+    "back": "Back",
+    "save": "Save",
+    "update": "Update",
+    "cancel": "Cancel",
+    "columns": {
+      "series": "#",
+      "name": "Name",
+      "actions": "Actions"
+    },
+    "tooltips": {
+      "activate": "Activate role",
+      "deactivate": "Deactivate role"
+    },
+    "confirmActivateText": "This role will be activated again.",
+    "confirmDeactivateText": "This role will be deactivated.",
+    "form": {
+      "name": "Role name",
+      "permissions": "Permissions",
+      "resourceName": "Resource name",
+      "addResource": "Add resource"
+    },
+    "errors": {
+      "nameRequired": "Role name is required.",
+      "permissionsRequired": "You must put the permissions."
+    }
   },
   "global": {
     "search": "Search...",

@@ -39,6 +39,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./feature/dashboard/analytics/analytics').then((m) => m.Analytics),
       },
+          {
+        path: 'roles',
+        title: 'roles | SurveyBasket',
+        loadComponent: () =>
+          import('./feature/dashboard/roles/roles').then((m) => m.Roles),
+      },
     ],
   },
   {

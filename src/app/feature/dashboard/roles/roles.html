@@ -1,0 +1,200 @@
+<div [dir]="direction() ? 'rtl' : 'ltr'" class="ac-container">
+  <div class="form-group-container">
+    @if (!showEntryForm()) {
+      <mat-card class="smart-mat-card">
+        <div class="materialTableHeader">
+          <div class="headerLeft">
+            <div class="usersIcon">
+              <mat-icon>admin_panel_settings</mat-icon>
+            </div>
+            <div>
+              <h5 class="headerTitleH5">{{ 'roles.title' | translate }}</h5>
+              <span class="headerSubTitle">{{ 'roles.subTitle' | translate }}</span>
+            </div>
+          </div>
+
+          <div class="headerCenter">
+            <mat-form-field class="searchTxt" appearance="outline">
+              <mat-icon matPrefix>search</mat-icon>
+              <input
+                matInput
+                [placeholder]="'roles.search' | translate"
+                (keyup)="applyFilter($any($event.target).value)"
+              />
+            </mat-form-field>
+          </div>
+
+          <div class="headerRight">
+            <button mat-flat-button class="actionBtn" (click)="openDialog()">
+              <mat-icon>add</mat-icon>
+              {{ 'roles.addRole' | translate }}
+            </button>
+            <button mat-flat-button class="actionBtn" (click)="getAllRoles()">
+              <mat-icon>refresh</mat-icon>
+              {{ 'roles.refresh' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="isLoading" style="text-align: center; padding: 32px">
+          <mat-icon>hourglass_empty</mat-icon> Loading...
+        </div>
+
+        <div class="gridView" [hidden]="isLoading">
+          <mat-table matSort [dataSource]="dataSource">
+            <ng-container matColumnDef="series">
+              <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">{{
+                'roles.columns.series' | translate
+              }}</mat-header-cell>
+              <mat-cell
+                *matCellDef="let row; let i = index"
+                class="mat-row-clickable"
+                (click)="openDialogEdit(row)"
+              >
+                {{ i + 1 }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+              <mat-header-cell *matHeaderCellDef mat-sort-header class="col-header">{{
+                'roles.columns.name' | translate
+              }}</mat-header-cell>
+              <mat-cell
+                *matCellDef="let row"
+                class="mat-row-clickable"
+                (click)="openDialogEdit(row)"
+              >
+                {{ row.name }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="isDeleted">
+              <mat-header-cell *matHeaderCellDef class="col-header">{{
+                'roles.columns.actions' | translate
+              }}</mat-header-cell>
+              <mat-cell *matCellDef="let row">
+                <button
+                  mat-icon-button
+                  [matTooltip]="
+                    (row.isDeleted ? 'roles.tooltips.activate' : 'roles.tooltips.deactivate')
+                      | translate
+                  "
+                  (click)="toggleStatus(row)"
+                >
+                  <mat-icon [style.color]="!row.isDeleted ? 'orange' : 'green'">
+                    {{ !row.isDeleted ? 'block' : 'check_circle' }}
+                  </mat-icon>
+                </button>
+              </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+          </mat-table>
+          <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+        </div>
+      </mat-card>
+    } @else {
+      <mat-card class="smart-mat-card">
+        <div class="materialTableHeader">
+          <div class="headerLeft">
+            <div class="usersIcon">
+              <mat-icon>{{ isEditMode() ? 'edit' : 'add_moderator' }}</mat-icon>
+            </div>
+            <div>
+              <h5 class="headerTitleH5">
+                {{ (isEditMode() ? 'roles.editRole' : 'roles.addRole') | translate }}
+              </h5>
+              <span class="headerSubTitle">{{
+                (isEditMode() ? 'roles.updateRole' : 'roles.createRole') | translate
+              }}</span>
+            </div>
+          </div>
+          <div class="headerRight">
+            <button mat-flat-button class="actionBtn" (click)="closeDialog()">
+              <mat-icon>arrow_back</mat-icon>
+              {{ 'roles.back' | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="form-body">
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>{{ 'roles.form.name' | translate }}</mat-label>
+              <input matInput [formField]="roleForm.name" />
+              @if (roleForm.name().touched() && roleForm.name().invalid()) {
+                @for (error of roleForm.name().errors(); track error) {
+                  <mat-error>{{ error.message }}</mat-error>
+                }
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="form-row permissions-row">
+            <div class="permissionsPanel">
+              <span class="rolesLabel">{{ 'roles.form.permissions' | translate }}</span>
+
+              <div class="addResourceRow">
+                <mat-form-field appearance="outline" class="form-field">
+                  <mat-label>{{ 'roles.form.resourceName' | translate }}</mat-label>
+                  <input
+                    matInput
+                    [value]="newResourceName()"
+                    (input)="newResourceName.set($any($event.target).value)"
+                  />
+                </mat-form-field>
+                <button mat-stroked-button (click)="addResourceGroup()">
+                  <mat-icon>add</mat-icon>
+                  {{ 'roles.form.addResource' | translate }}
+                </button>
+              </div>
+
+              @for (group of permissionGroups(); track group.resource) {
+                <div class="permissionGroup">
+                  <div class="permissionGroupHeader">
+                    <span class="permissionGroupTitle">{{ group.resource }}</span>
+                    <button mat-icon-button (click)="removeResourceGroup(group.resource)">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                  <div class="permissionGroupBody">
+                    @for (action of fixedActions; track action) {
+                      <mat-checkbox
+                        [checked]="group.actions.includes(action)"
+                        (change)="toggleAction(group.resource, action)"
+                      >
+                        {{ action }}
+                      </mat-checkbox>
+                    }
+                  </div>
+                </div>
+              }
+
+              @if (roleForm.permissions().touched() && roleForm.permissions().invalid()) {
+                @for (error of roleForm.permissions().errors(); track error) {
+                  <mat-error class="permissionsError">{{ error.message }}</mat-error>
+                }
+              }
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              mat-flat-button
+              class="actionBtn"
+              [disabled]="roleForm().invalid()"
+              (click)="doSave()"
+            >
+              <mat-icon>save</mat-icon>
+              {{ (isEditMode() ? 'roles.update' : 'roles.save') | translate }}
+            </button>
+            <button mat-stroked-button (click)="closeDialog()">
+              {{ 'roles.cancel' | translate }}
+            </button>
+          </div>
+        </div>
+      </mat-card>
+    }
+  </div>
+</div>

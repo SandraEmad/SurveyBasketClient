@@ -1,8 +1,3 @@
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
 
 html {
@@ -19,21 +14,572 @@ html {
   );
 }
 
-body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
+/* ============================
+   1) CSS Variables (Light Theme - Default)
+   ============================ */
+:root {
+  --page-bg-1: #d8ebff;
+  --page-bg-2: #dff5ff;
+  --page-bg-3: #f9fbff;
+  --page-bg-4: #eef7ff;
 
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
+  --card-bg: #ffffff;
+  --card-border: rgba(255, 255, 255, .6);
+  --card-shadow-1: rgba(48, 110, 255, .08);
+  --card-shadow-2: rgba(0, 0, 0, .04);
+
+  --header-grad-1: #7599d3;
+  --header-grad-2: #67b0ff;
+  --header-grad-3: #74c0ff;
+  --header-text: #ffffff;
+  --header-subtext: rgba(255, 255, 255, .9);
+
+  --accent-color: #67b0ff;
+  --accent-light: #eef6ff;
+  --accent-border: #d5e4ff;
+
+  --text-primary: #2f4058;
+  --text-secondary: #60779b;
+  --text-muted: #8290b3;
+
+  --table-header-bg: #f7faff;
+  --row-bg: #ffffff;
+  --row-hover-shadow: rgba(84, 142, 255, .15);
+
+  --input-bg: #ffffff;
+  --input-shadow: rgba(0, 0, 0, .05);
+
+  --paginator-bg: #ffffff;
+  --paginator-btn-bg: #f3f6fb;
+  --paginator-btn-hover: #e3edff;
+
+  --error-bg: #fdecea;
+  --error-border: #f6c6c2;
+  --error-text: #d32f2f;
+
+  --form-bg: #fbfdff;
+  --avatar-border: #eef7ff;
+}
+
+/* ============================
+   2) Dark Theme Overrides
+   ============================ */
+body.dark-mode {
+  --page-bg-1: #1a2332;
+  --page-bg-2: #16202c;
+  --page-bg-3: #10151d;
+  --page-bg-4: #141a24;
+
+  --card-bg: #1e2732;
+  --card-border: rgba(255, 255, 255, .06);
+  --card-shadow-1: rgba(0, 0, 0, .4);
+  --card-shadow-2: rgba(0, 0, 0, .3);
+
+  --header-grad-1: #2c3e5e;
+  --header-grad-2: #35608f;
+  --header-grad-3: #3f7bab;
+  --header-text: #eef3fb;
+  --header-subtext: rgba(255, 255, 255, .75);
+
+  --accent-color: #5fa8f5;
+  --accent-light: #223247;
+  --accent-border: #33455e;
+
+  --text-primary: #dbe4f0;
+  --text-secondary: #a9b8cf;
+  --text-muted: #7c8aa3;
+
+  --table-header-bg: #202b39;
+  --row-bg: #1e2732;
+  --row-hover-shadow: rgba(0, 0, 0, .5);
+
+  --input-bg: #26313f;
+  --input-shadow: rgba(0, 0, 0, .3);
+
+  --paginator-bg: #1e2732;
+  --paginator-btn-bg: #26313f;
+  --paginator-btn-hover: #33455e;
+
+  --error-bg: #3a2323;
+  --error-border: #6e3535;
+  --error-text: #ef5350;
+
+  --form-bg: #171f29;
+  --avatar-border: #2a3646;
+}
+
+body {
+  color-scheme: light;
   background-color: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
   font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
   height: 100%;
 }
-/* You can add global styles to this file, and also import other style files */
+
+body.dark-mode {
+  color-scheme: dark;
+}
+
+/* ============================
+   3) Global Styles
+   ============================ */
+.ac-container {
+  padding: 35px;
+
+  background:
+    radial-gradient(circle at top left, var(--page-bg-1), transparent 45%),
+    radial-gradient(circle at bottom right, var(--page-bg-2), transparent 35%),
+    linear-gradient(180deg, var(--page-bg-3), var(--page-bg-4));
+}
+
+.smart-mat-card {
+  overflow: hidden;
+  border-radius: 28px !important;
+  border: none !important;
+  background: var(--card-bg);
+
+  box-shadow:
+    0 30px 70px var(--card-shadow-1),
+    0 8px 20px var(--card-shadow-2);
+
+  position: relative;
+}
+
+.smart-mat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 28px;
+  border: 1px solid var(--card-border);
+}
+
+.materialTableHeader {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  overflow: hidden;
+
+  background:
+    linear-gradient(120deg,
+      var(--header-grad-1) 0%,
+      var(--header-grad-2) 55%,
+      var(--header-grad-3) 100%);
+}
+
+.materialTableHeader::before {
+  content: "";
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  top: -220px;
+  left: 260px;
+  background: rgba(255, 255, 255, .08);
+}
+
+.materialTableHeader::after {
+  content: "";
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  top: -180px;
+  left: 420px;
+  background: rgba(255, 255, 255, .06);
+}
+
+.headerLeft {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.usersIcon {
+  width: 60px;
+  height: 60px;
+  margin-left: 15px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .16);
+  backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px rgba(255, 255, 255, .3);
+}
+
+.usersIcon mat-icon {
+  font-size: 30px;
+  width: 30px;
+  height: 30px;
+  color: white;
+}
+
+.headerTitleH5 {
+  color: var(--header-text);
+  margin: 5px 10px;
+  font-size: 29px;
+  letter-spacing: .3px;
+}
+
+.headerSubTitle {
+  color: var(--header-subtext);
+  font-size: 20px;
+  margin: 6px 10px;
+}
+.searchTxt {
+  width: 600px;
+}
+
+.searchTxt .mat-mdc-text-field-wrapper {
+  background: var(--input-bg) !important;
+  border-radius: 18px !important;
+  height: 50px;
+  box-shadow: 0 10px 25px var(--input-shadow);
+}
+
+.searchTxt .mdc-notched-outline {
+  display: none;
+}
+
+.searchTxt input {
+  font-size: 16px;
+}
+
+.searchTxt mat-icon {
+  color: #8290b3;
+}
+.actionBtn {
+  margin-right: 25px !important;
+  padding: 0 20px !important;
+  border-radius: 16px !important;
+  background: var(--card-bg) !important;
+  color: var(--accent-color) !important;
+  box-shadow: 0 8px 20px var(--card-shadow-2);
+  transition: .35s;
+}
+
+.actionBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px var(--row-hover-shadow);
+}
+
+.mat-mdc-header-row {
+  height: 65px;
+  background: var(--table-header-bg);
+}
+
+.mat-mdc-header-cell {
+  font-size: 13px;
+  color: var(--accent-color) !important;
+  font-weight: 700;
+  border-bottom: none !important;
+  letter-spacing: .5px;
+}
+
+.mat-mdc-row {
+  background: var(--row-bg);
+  transition: .35s;
+  border-radius: 10px;
+  margin: 5px 0px;
+  overflow: hidden;
+}
+
+.mat-mdc-row:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 18px 40px var(--row-hover-shadow);
+}
+
+.mat-mdc-cell {
+  height: 80px;
+  border-bottom: none !important;
+  color: var(--text-primary);
+}
+
+.mat-mdc-cell img {
+  width: 54px !important;
+  height: 54px !important;
+  border-radius: 50%;
+  border: 4px solid var(--avatar-border);
+  object-fit: cover;
+}
+
+.mat-mdc-cell mat-icon {
+  transition: .3s;
+}
+
+.mat-mdc-row:hover mat-icon {
+  transform: scale(1.08);
+}
+
+.mat-mdc-table {
+  background-color: var(--row-bg);
+}
+
+button[mat-icon-button] {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  transition: .3s;
+}
+
+button[mat-icon-button]:hover {
+  background: var(--accent-light);
+  transform: scale(1.08);
+}
+
+mat-paginator {
+  display: block;
+  border-radius: 18px;
+  background: var(--paginator-bg);
+  box-shadow: 0 8px 25px var(--card-shadow-2);
+  overflow: hidden;
+
+  ::ng-deep .mat-mdc-paginator-container {
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 60px;
+    padding: 0 20px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  ::ng-deep .mat-mdc-paginator-range-label {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--text-primary);
+    font-weight: 500;
+    direction: ltr;
+    unicode-bidi: isolate;
+    order: 1;
+  }
+
+  ::ng-deep .mat-mdc-paginator-range-actions {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+    order: 2;
+  }
+
+  ::ng-deep .mat-mdc-icon-button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--paginator-btn-bg);
+    transition: .25s;
+  }
+
+  ::ng-deep .mat-mdc-icon-button:not(:disabled):hover {
+    background: var(--paginator-btn-hover);
+  }
+
+  ::ng-deep .mat-mdc-icon-button:not(:disabled) .mat-mdc-paginator-icon {
+    fill: var(--text-primary);
+  }
+
+  ::ng-deep .mat-mdc-icon-button:disabled {
+    opacity: .3;
+  }
+
+  ::ng-deep .mat-mdc-paginator-page-size {
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    gap: 8px;
+    margin: 0;
+    order: 3;
+  }
+
+  ::ng-deep .mat-mdc-paginator-page-size-label {
+    display: none;
+  }
+
+  ::ng-deep .mat-mdc-paginator-page-size-select {
+    width: auto;
+    margin: 0;
+
+    .mat-mdc-text-field-wrapper {
+      background: var(--paginator-btn-bg) !important;
+      border-radius: 30px !important;
+      padding: 0 14px !important;
+      height: 36px !important;
+    }
+
+    .mdc-notched-outline {
+      display: none;
+    }
+  }
+}
+
+.form-body {
+  padding: 35px;
+  background: var(--form-bg);
+}
+
+.form-row {
+  display: flex;
+  gap: 28px;
+  margin-bottom: 28px;
+}
+
+.form-field {
+  flex: 1;
+}
+
+.form-field {
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    height: 62px;
+    border-radius: 18px !important;
+    background: var(--input-bg) !important;
+    box-shadow: 0 8px 18px var(--input-shadow);
+    transition: .3s;
+  }
+}
+
+.form-field.mat-focused {
+  ::ng-deep .mat-mdc-text-field-wrapper {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px var(--row-hover-shadow);
+  }
+}
+
+::ng-deep .mdc-floating-label {
+  color: var(--text-secondary) !important;
+  font-weight: 500;
+}
+
+::ng-deep input {
+  font-size: 15px;
+  color: var(--text-primary);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.form-actions button[mat-stroked-button] {
+  min-width: 140px;
+  height: 50px;
+  border-radius: 16px;
+  border: 1px solid var(--accent-border);
+  color: var(--accent-color);
+  background: var(--card-bg);
+  transition: .3s;
+}
+
+.form-actions button[mat-stroked-button]:hover {
+  background: var(--accent-light);
+}
+
+.form-field {
+  animation: fadeUp .5s ease;
+}
+
+.form-field, .searchTxt {
+  ::ng-deep .mdc-notched-outline__leading,
+  ::ng-deep .mdc-notched-outline__notch,
+  ::ng-deep .mdc-notched-outline__trailing {
+    border: none !important;
+  }
+}
+
+.form-field {
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    overflow: visible;
+  }
+
+  ::ng-deep mat-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--error-text);
+    background: var(--error-bg);
+    border-radius: 10px;
+    border: 1px solid var(--error-border);
+    animation: errorSlide .25s ease;
+  }
+
+  ::ng-deep mat-error::before {
+    content: "error";
+    font-family: "Material Icons";
+    font-size: 16px;
+    color: var(--error-text);
+  }
+}
+
+@keyframes errorSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}
+
+::ng-deep .mat-column-actionsBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 90px;
+}
+
+/* ============================
+   4) Responsive
+   ============================ */
+@media (max-width: 992px) {
+  .searchTxt {
+    width: 100%;
+  }
+
+  .form-row {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .ac-container {
+    padding: 18px;
+  }
+
+  .materialTableHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .headerTitleH5 {
+    font-size: 22px;
+  }
+
+  .headerSubTitle {
+    font-size: 15px;
+  }
+
+  .actionBtn {
+    margin-right: 0 !important;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  mat-paginator ::ng-deep .mat-mdc-paginator-container {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+}
